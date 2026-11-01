@@ -244,6 +244,248 @@
     .module-name { font-weight: 800; font-size: 0.95rem; color: #0F172A; margin-top: 0.25rem; }
     .module-desc { font-size: 0.8rem; color: var(--text-sub); }
 
+    /* PROFILE HEADER BUTTON */
+    .profile-header-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      background: #F1F5F9;
+      border: 1.5px solid var(--border);
+      padding: 0.35rem 0.75rem;
+      border-radius: 100px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: var(--text);
+      transition: all 0.2s;
+    }
+    .profile-header-btn:hover {
+      border-color: var(--primary);
+      background: var(--primary-soft);
+    }
+    .profile-header-avatar {
+      font-size: 1.15rem;
+      line-height: 1;
+    }
+    .profile-header-name {
+      max-width: 65px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-weight: 800;
+    }
+    .profile-header-arrow {
+      font-size: 0.65rem;
+      color: var(--text-sub);
+    }
+
+    /* PROFILE MODAL (DRAWER) */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(15, 23, 42, 0.45);
+      backdrop-filter: blur(4px);
+      z-index: 250;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      transition: opacity 0.2s;
+    }
+    .modal-sheet {
+      width: 100%;
+      max-width: 480px;
+      background: white;
+      border-radius: 28px 28px 0 0;
+      padding: 1.5rem 1.25rem 2rem 1.25rem;
+      max-height: 85vh;
+      overflow-y: auto;
+      box-shadow: 0 -10px 40px rgba(0,0,0,0.15);
+      animation: sheetSlideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes sheetSlideUp {
+      from { transform: translateY(100%); }
+      to { transform: translateY(0); }
+    }
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.15rem;
+    }
+    .modal-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: #0F172A;
+    }
+    .btn-close-modal {
+      border: none;
+      background: #F1F5F9;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1rem;
+      color: var(--text-sub);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .profile-cards-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin-bottom: 1.15rem;
+    }
+    .profile-card-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.85rem 1rem;
+      border-radius: var(--radius-md);
+      border: 2px solid var(--border);
+      background: #FAFAFA;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .profile-card-item:hover {
+      border-color: #CBD5E1;
+      transform: translateY(-1px);
+    }
+    .profile-card-item.active {
+      border-color: var(--primary);
+      background: var(--primary-soft);
+      box-shadow: 0 4px 14px rgba(255, 90, 54, 0.12);
+    }
+    .profile-card-left {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+    }
+    .profile-card-avatar {
+      width: 46px;
+      height: 46px;
+      border-radius: 14px;
+      background: white;
+      border: 1.5px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.7rem;
+    }
+    .profile-card-info h4 {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: #0F172A;
+    }
+    .profile-card-info p {
+      font-size: 0.8rem;
+      color: var(--text-sub);
+      margin-top: 0.15rem;
+      font-weight: 600;
+    }
+    .profile-card-right {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+    .profile-active-tag {
+      font-size: 0.72rem;
+      font-weight: 800;
+      color: var(--primary);
+      background: white;
+      padding: 0.2rem 0.6rem;
+      border-radius: 100px;
+      border: 1px solid #FFEDD5;
+    }
+    .btn-edit-profile-icon {
+      border: none;
+      background: transparent;
+      font-size: 1rem;
+      cursor: pointer;
+      padding: 0.35rem;
+      opacity: 0.6;
+      transition: all 0.15s;
+    }
+    .btn-edit-profile-icon:hover {
+      opacity: 1;
+      transform: scale(1.15);
+    }
+
+    .btn-add-profile {
+      width: 100%;
+      padding: 0.85rem;
+      border-radius: 100px;
+      border: 2px dashed #CBD5E1;
+      background: #F8FAFC;
+      color: var(--text);
+      font-weight: 700;
+      font-size: 0.92rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      transition: all 0.15s;
+    }
+    .btn-add-profile:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+      background: var(--primary-soft);
+    }
+
+    .avatar-picker-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 0.5rem;
+    }
+    .avatar-opt-chip {
+      aspect-ratio: 1 / 1;
+      border-radius: 12px;
+      border: 2px solid var(--border);
+      background: #F8FAFC;
+      font-size: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .avatar-opt-chip:hover {
+      transform: scale(1.08);
+      border-color: var(--primary);
+    }
+    .avatar-opt-chip.selected {
+      border-color: var(--primary);
+      background: var(--primary-soft);
+      transform: scale(1.08);
+      box-shadow: 0 4px 10px rgba(255, 90, 54, 0.25);
+    }
+
+    /* TOAST NOTIFICATION */
+    .app-toast {
+      position: fixed;
+      top: 1.25rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(-20px);
+      background: rgba(15, 23, 42, 0.92);
+      backdrop-filter: blur(8px);
+      color: white;
+      padding: 0.65rem 1.25rem;
+      border-radius: 100px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+      z-index: 400;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .app-toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
     /* LESSON SCREEN */
     .lesson-screen {
       position: absolute; top: 0; left: 0; width: 100%; height: 100%;
@@ -466,9 +708,16 @@
         <div class="brand-icon">超</div>
         <div class="brand-name">SuperChinese</div>
       </div>
-      <div class="streak-badge">
-        <span>🔥</span>
-        <span id="streakCount">1 ngày</span>
+      <div style="display:flex; align-items:center; gap:0.5rem;">
+        <div class="streak-badge" id="streakBadge" title="Tiến độ học tập">
+          <span>🔥</span>
+          <span id="streakCount">0 bài</span>
+        </div>
+        <button class="profile-header-btn" id="btnProfileSwitch" onclick="openProfileModal()">
+          <span class="profile-header-avatar" id="hdrProfileAvatar">👨</span>
+          <span class="profile-header-name" id="hdrProfileName">Bố</span>
+          <span class="profile-header-arrow">▼</span>
+        </button>
       </div>
     </header>
 
@@ -535,6 +784,61 @@
 
       <button class="btn-continue" onclick="finishVictory()">Hoàn Thành ➔</button>
     </div>
+
+    <!-- PROFILE MANAGEMENT MODAL (DRAWER SHEET) -->
+    <div class="modal-overlay hidden" id="modalProfileOverlay" onclick="closeProfileModal(event)">
+      <div class="modal-sheet" id="modalProfileSheet" onclick="event.stopPropagation()">
+        
+        <!-- VIEW 1: PROFILES LIST -->
+        <div id="profileListView">
+          <div class="modal-header">
+            <div>
+              <div class="modal-title">Hồ Sơ Học Tập 👨‍👩‍👦</div>
+              <p style="font-size:0.8rem; color:var(--text-sub); margin-top:0.2rem;">Chọn hồ sơ để lưu riêng tiến độ của bố/mẹ và bé</p>
+            </div>
+            <button class="btn-close-modal" onclick="closeProfileModal()">✕</button>
+          </div>
+
+          <div class="profile-cards-list" id="profileCardsContainer"></div>
+
+          <button class="btn-add-profile" onclick="openAddProfileView()">
+            <span>➕</span>
+            <span>Thêm Hồ Sơ Mới (Bé, Mẹ...)</span>
+          </button>
+        </div>
+
+        <!-- VIEW 2: ADD / EDIT PROFILE -->
+        <div id="profileEditView" class="hidden">
+          <div class="modal-header">
+            <div class="modal-title" id="editProfileTitle">Thêm Hồ Sơ Mới</div>
+            <button class="btn-close-modal" onclick="backToProfileList()">✕</button>
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:1.15rem;">
+            <div>
+              <label style="font-size:0.82rem; font-weight:800; color:#475569; display:block; margin-bottom:0.4rem;">TÊN NGƯỜI HỌC</label>
+              <input type="text" id="inputProfileName" placeholder="Ví dụ: Bé Bo, Mẹ, v.v..." style="width:100%; padding:0.85rem 1rem; border-radius:var(--radius-sm); border:2px solid var(--border); font-size:1rem; font-weight:700; outline:none;" />
+            </div>
+
+            <div>
+              <label style="font-size:0.82rem; font-weight:800; color:#475569; display:block; margin-bottom:0.4rem;">CHỌN HÌNH ĐẠI DIỆN</label>
+              <div class="avatar-picker-grid" id="avatarPickerGrid"></div>
+            </div>
+
+            <div style="display:flex; gap:0.75rem; margin-top:0.5rem;">
+              <button class="btn-continue" style="flex:1; padding:0.9rem;" onclick="saveProfileFromForm()">Lưu Hồ Sơ</button>
+              <button class="btn-close-modal" style="width:auto; border-radius:100px; padding:0 1.25rem; font-weight:700;" onclick="backToProfileList()">Hủy</button>
+            </div>
+
+            <button id="btnDeleteProfile" onclick="deleteCurrentEditingProfile()" style="border:none; background:transparent; color:var(--danger); font-size:0.85rem; font-weight:700; cursor:pointer; margin-top:0.25rem; display:none;">🗑 Xóa hồ sơ này</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div class="app-toast" id="appToast">Đã chuyển sang hồ sơ</div>
   </div>
 
   <!-- COMPLETE COMPILED LESSON DATA -->
@@ -604,52 +908,154 @@
       }
     };
 
-    const ProgressManager = {
-      KEY: 'sc_learned_progress_v1',
-      data: null,
-      load() {
-        if (!this.data) {
-          try {
-            const raw = localStorage.getItem(this.KEY);
-            this.data = raw ? JSON.parse(raw) : {};
-          } catch (e) {
-            this.data = {};
+    const ProfileManager = {
+      KEY: 'sc_profiles_data_v2',
+      state: null,
+      AVATARS: ['👨', '👩', '👦', '👧', '🐼', '🐯', '🦊', '🦁', '🐰', '🐻', '🐱', '🐶'],
+
+      init() {
+        if (this.state) return this.state;
+        try {
+          const raw = localStorage.getItem(this.KEY);
+          if (raw) {
+            this.state = JSON.parse(raw);
           }
+        } catch (e) {}
+
+        if (!this.state || !this.state.profiles || this.state.profiles.length === 0) {
+          let oldProgress = {};
+          try {
+            const oldRaw = localStorage.getItem('sc_learned_progress_v1');
+            if (oldRaw) oldProgress = JSON.parse(oldRaw);
+          } catch (e) {}
+
+          this.state = {
+            activeId: 'p_parent',
+            profiles: [
+              {
+                id: 'p_parent',
+                name: 'Bố',
+                avatar: '👨',
+                role: 'Phụ huynh',
+                level: 'L1',
+                progress: oldProgress
+              },
+              {
+                id: 'p_child',
+                name: 'Bé',
+                avatar: '🐼',
+                role: 'Bé học tập',
+                level: 'L1',
+                progress: {}
+              }
+            ]
+          };
+          this.save();
         }
-        return this.data;
+        return this.state;
       },
+
       save() {
         try {
-          localStorage.setItem(this.KEY, JSON.stringify(this.data));
+          localStorage.setItem(this.KEY, JSON.stringify(this.state));
         } catch (e) {}
       },
+
+      getActiveProfile() {
+        this.init();
+        let p = this.state.profiles.find(x => x.id === this.state.activeId);
+        if (!p) {
+          p = this.state.profiles[0];
+          this.state.activeId = p.id;
+        }
+        return p;
+      },
+
+      switchProfile(profileId) {
+        this.init();
+        const p = this.state.profiles.find(x => x.id === profileId);
+        if (p) {
+          this.state.activeId = profileId;
+          currentLevel = p.level || 'L1';
+          this.save();
+          renderRoadmap();
+          document.getElementById('modalProfileOverlay').classList.add('hidden');
+          showToast(`Đã chuyển sang hồ sơ: ${p.avatar} ${p.name}`);
+        }
+      },
+
+      saveProfile(id, name, avatar) {
+        this.init();
+        if (id) {
+          const p = this.state.profiles.find(x => x.id === id);
+          if (p) {
+            p.name = name.trim() || p.name;
+            p.avatar = avatar || p.avatar;
+          }
+        } else {
+          const newId = 'p_' + Date.now();
+          this.state.profiles.push({
+            id: newId,
+            name: name.trim() || 'Học viên',
+            avatar: avatar || '🐱',
+            role: 'Thành viên',
+            level: 'L1',
+            progress: {}
+          });
+          this.state.activeId = newId;
+          currentLevel = 'L1';
+        }
+        this.save();
+        renderRoadmap();
+      },
+
+      deleteProfile(id) {
+        this.init();
+        if (this.state.profiles.length <= 1) {
+          alert("Cần giữ lại ít nhất 1 hồ sơ học tập!");
+          return;
+        }
+        this.state.profiles = this.state.profiles.filter(x => x.id !== id);
+        if (this.state.activeId === id) {
+          this.state.activeId = this.state.profiles[0].id;
+        }
+        this.save();
+        renderRoadmap();
+      }
+    };
+
+    const ProgressManager = {
+      getProgress() {
+        const p = ProfileManager.getActiveProfile();
+        if (!p.progress) p.progress = {};
+        return p.progress;
+      },
       isCompleted(lvl, unit, mod) {
-        this.load();
-        return !!(this.data[lvl] && this.data[lvl][unit] && this.data[lvl][unit][mod]);
+        const data = this.getProgress();
+        return !!(data[lvl] && data[lvl][unit] && data[lvl][unit][mod]);
       },
       markCompleted(lvl, unit, mod) {
-        this.load();
-        if (!this.data[lvl]) this.data[lvl] = {};
-        if (!this.data[lvl][unit]) this.data[lvl][unit] = {};
-        this.data[lvl][unit][mod] = true;
-        this.save();
+        const data = this.getProgress();
+        if (!data[lvl]) data[lvl] = {};
+        if (!data[lvl][unit]) data[lvl][unit] = {};
+        data[lvl][unit][mod] = true;
+        ProfileManager.save();
       },
       toggle(lvl, unit, mod) {
-        this.load();
-        if (!this.data[lvl]) this.data[lvl] = {};
-        if (!this.data[lvl][unit]) this.data[lvl][unit] = {};
-        this.data[lvl][unit][mod] = !this.data[lvl][unit][mod];
-        this.save();
+        const data = this.getProgress();
+        if (!data[lvl]) data[lvl] = {};
+        if (!data[lvl][unit]) data[lvl][unit] = {};
+        data[lvl][unit][mod] = !data[lvl][unit][mod];
+        ProfileManager.save();
       },
       getUnitStats(lvl, unit) {
-        this.load();
-        const u = (this.data[lvl] && this.data[lvl][unit]) || {};
+        const data = this.getProgress();
+        const u = (data[lvl] && data[lvl][unit]) || {};
         const mods = ['words', 'grammar', 'text', 'test'];
         const done = mods.filter(m => u[m]).length;
         return { done, total: mods.length, isAllDone: done === mods.length };
       },
       getLevelStats(lvl) {
-        this.load();
         const lvlData = window.LESSONS_DATA[lvl] || {};
         const unitKeys = Object.keys(lvlData);
         const total = unitKeys.length * 4;
@@ -662,12 +1068,12 @@
         return { done, total, percent };
       },
       getTotalLearnedCount() {
-        this.load();
+        const data = this.getProgress();
         let count = 0;
-        for (const l in this.data) {
-          for (const u in this.data[l]) {
-            for (const m in this.data[l][u]) {
-              if (this.data[l][u][m]) count++;
+        for (const l in data) {
+          for (const u in data[l]) {
+            for (const m in data[l][u]) {
+              if (data[l][u][m]) count++;
             }
           }
         }
@@ -702,12 +1108,18 @@
         alert("Chưa tìm thấy tệp lessons_data.js! Hãy đảm bảo file nằm cùng thư mục.");
         return;
       }
+      ProfileManager.init();
+      const activeP = ProfileManager.getActiveProfile();
+      currentLevel = activeP.level || 'L1';
       renderRoadmap();
     }
 
     function switchLevel(lvl) {
       currentLevel = lvl;
       activeUnitCard = 1;
+      const activeP = ProfileManager.getActiveProfile();
+      activeP.level = lvl;
+      ProfileManager.save();
       document.querySelectorAll('.level-btn').forEach(btn => {
         btn.classList.toggle('active', btn.innerText === 'Level ' + lvl.replace('L',''));
       });
@@ -730,6 +1142,142 @@
       renderRoadmap();
     }
 
+    /* PROFILE MODAL & MANAGEMENT HANDLERS */
+    let currentEditingProfileId = null;
+    let selectedAvatarEmoji = '👨';
+
+    function openProfileModal() {
+      ProfileManager.init();
+      renderProfileCardsList();
+      backToProfileList();
+      document.getElementById('modalProfileOverlay').classList.remove('hidden');
+    }
+
+    function closeProfileModal(e) {
+      if (e && e.target !== document.getElementById('modalProfileOverlay') && !e.target.classList.contains('btn-close-modal')) return;
+      document.getElementById('modalProfileOverlay').classList.add('hidden');
+    }
+
+    function renderProfileCardsList() {
+      const container = document.getElementById('profileCardsContainer');
+      if (!container) return;
+      container.innerHTML = '';
+
+      const state = ProfileManager.state;
+      state.profiles.forEach(p => {
+        let count = 0;
+        for (const l in p.progress || {}) {
+          for (const u in p.progress[l]) {
+            for (const m in p.progress[l][u]) {
+              if (p.progress[l][u][m]) count++;
+            }
+          }
+        }
+        const isActive = p.id === state.activeId;
+
+        const card = document.createElement('div');
+        card.className = `profile-card-item ${isActive ? 'active' : ''}`;
+        card.onclick = () => ProfileManager.switchProfile(p.id);
+
+        card.innerHTML = `
+          <div class="profile-card-left">
+            <div class="profile-card-avatar">${p.avatar}</div>
+            <div class="profile-card-info">
+              <h4>${p.name}</h4>
+              <p>${count > 0 ? `Đã hoàn thành ${count} phần học` : 'Chưa có bài học nào'}</p>
+            </div>
+          </div>
+          <div class="profile-card-right">
+            ${isActive ? '<span class="profile-active-tag">✓ Đang học</span>' : ''}
+            <button class="btn-edit-profile-icon" title="Chỉnh sửa hồ sơ" onclick="event.stopPropagation(); editProfile('${p.id}')">✏️</button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function renderAvatarPicker(selected) {
+      const grid = document.getElementById('avatarPickerGrid');
+      if (!grid) return;
+      grid.innerHTML = '';
+      selectedAvatarEmoji = selected || ProfileManager.AVATARS[0];
+
+      ProfileManager.AVATARS.forEach(emoji => {
+        const chip = document.createElement('div');
+        chip.className = `avatar-opt-chip ${emoji === selectedAvatarEmoji ? 'selected' : ''}`;
+        chip.innerText = emoji;
+        chip.onclick = () => {
+          selectedAvatarEmoji = emoji;
+          renderAvatarPicker(emoji);
+        };
+        grid.appendChild(chip);
+      });
+    }
+
+    function openAddProfileView() {
+      currentEditingProfileId = null;
+      document.getElementById('editProfileTitle').innerText = 'Thêm Hồ Sơ Mới';
+      document.getElementById('inputProfileName').value = '';
+      document.getElementById('btnDeleteProfile').style.display = 'none';
+      renderAvatarPicker('🐼');
+      document.getElementById('profileListView').classList.add('hidden');
+      document.getElementById('profileEditView').classList.remove('hidden');
+      setTimeout(() => document.getElementById('inputProfileName').focus(), 100);
+    }
+
+    function editProfile(profileId) {
+      currentEditingProfileId = profileId;
+      const p = ProfileManager.state.profiles.find(x => x.id === profileId);
+      if (!p) return;
+
+      document.getElementById('editProfileTitle').innerText = `Chỉnh Sửa: ${p.name}`;
+      document.getElementById('inputProfileName').value = p.name;
+      const btnDel = document.getElementById('btnDeleteProfile');
+      btnDel.style.display = ProfileManager.state.profiles.length > 1 ? 'block' : 'none';
+      renderAvatarPicker(p.avatar);
+
+      document.getElementById('profileListView').classList.add('hidden');
+      document.getElementById('profileEditView').classList.remove('hidden');
+    }
+
+    function backToProfileList() {
+      document.getElementById('profileEditView').classList.add('hidden');
+      document.getElementById('profileListView').classList.remove('hidden');
+      renderProfileCardsList();
+    }
+
+    function saveProfileFromForm() {
+      const name = document.getElementById('inputProfileName').value.trim();
+      if (!name) {
+        alert("Vui lòng nhập tên người học!");
+        return;
+      }
+      ProfileManager.saveProfile(currentEditingProfileId, name, selectedAvatarEmoji);
+      backToProfileList();
+      showToast(`Đã lưu hồ sơ: ${selectedAvatarEmoji} ${name}`);
+    }
+
+    function deleteCurrentEditingProfile() {
+      if (!currentEditingProfileId) return;
+      if (confirm("Bạn có chắc chắn muốn xóa hồ sơ này cùng toàn bộ tiến độ của hồ sơ không?")) {
+        ProfileManager.deleteProfile(currentEditingProfileId);
+        backToProfileList();
+        showToast("Đã xóa hồ sơ!");
+      }
+    }
+
+    let toastTimer = null;
+    function showToast(msg) {
+      const toast = document.getElementById('appToast');
+      if (!toast) return;
+      toast.innerText = msg;
+      toast.classList.add('show');
+      if (toastTimer) clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        toast.classList.remove('show');
+      }, 2200);
+    }
+
     function renderRoadmap() {
       const lvlData = window.LESSONS_DATA[currentLevel] || {};
       const units = Object.keys(lvlData).map(Number).sort((a,b) => a - b);
@@ -737,6 +1285,16 @@
       const meta = LEVEL_TITLES[currentLevel] || { tag: currentLevel, title: 'Khóa Học Tiếng Trung' };
       document.getElementById('heroLevelTag').innerText = meta.tag;
       document.getElementById('heroTitle').innerText = meta.title;
+
+      const activeP = ProfileManager.getActiveProfile();
+      const hdrAvatar = document.getElementById('hdrProfileAvatar');
+      const hdrName = document.getElementById('hdrProfileName');
+      if (hdrAvatar) hdrAvatar.innerText = activeP.avatar;
+      if (hdrName) hdrName.innerText = activeP.name;
+
+      document.querySelectorAll('.level-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.innerText === 'Level ' + currentLevel.replace('L',''));
+      });
 
       const lvlProg = ProgressManager.getLevelStats(currentLevel);
       const subEl = document.getElementById('heroSubtitle');
