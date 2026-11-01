@@ -1,0 +1,13 @@
+data/
+*.ps1
+*.json
+*.bat
+inspect_*.js
+debug_*.js
+check_*.js
+make_*.js
+export_*.js
+stats.js
+parse_and_compile.js
+.DS_Store
+Thumbs.db

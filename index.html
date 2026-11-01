@@ -1,0 +1,1399 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="SuperChinese">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#FF5A36">
+  <title>SuperChinese Web - Học Tiếng Trung Tương Tác</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #FF5A36;
+      --primary-dark: #E04523;
+      --primary-soft: #FFF1EE;
+      --primary-gradient: linear-gradient(135deg, #FF6F43 0%, #FF4D2D 100%);
+      --bg: #F4F6F9;
+      --surface: #FFFFFF;
+      --border: #E8EDF2;
+      --text: #1E293B;
+      --text-sub: #64748B;
+      --text-muted: #94A3B8;
+      --success: #10B981;
+      --success-soft: #ECFDF5;
+      --danger: #EF4444;
+      --danger-soft: #FEF2F2;
+      --blue: #3B82F6;
+      --blue-soft: #EFF6FF;
+      --purple: #8B5CF6;
+      --purple-soft: #F5F3FF;
+      --radius-sm: 12px;
+      --radius-md: 20px;
+      --radius-lg: 28px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: #E2E8F0;
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .app-viewport {
+      width: 100%;
+      max-width: 480px;
+      background: var(--surface);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+    }
+
+    @media (min-width: 500px) {
+      body {
+        align-items: center;
+        padding: 1.5rem 0;
+      }
+      .app-viewport {
+        height: 92vh;
+        max-height: 860px;
+        border-radius: 36px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.18);
+        border: 4px solid #CBD5E1;
+        overflow: hidden;
+      }
+    }
+
+    /* HEADER */
+    .app-header {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0.85rem 1.25rem;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .header-left { display: flex; align-items: center; gap: 0.75rem; }
+    .brand-icon {
+      width: 36px; height: 36px; border-radius: 10px; background: var(--primary-gradient);
+      color: white; font-weight: 900; font-size: 1.2rem;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 12px rgba(255, 90, 54, 0.3);
+    }
+    .brand-name { font-weight: 800; font-size: 1.15rem; color: #0F172A; letter-spacing: -0.5px; }
+    .streak-badge {
+      display: flex; align-items: center; gap: 0.4rem;
+      background: #FFF7ED; border: 1.5px solid #FFEDD5; padding: 0.4rem 0.85rem;
+      border-radius: 100px; font-weight: 700; font-size: 0.85rem; color: #C2410C;
+    }
+
+    .app-content { flex: 1; overflow-y: auto; padding: 1.25rem; }
+
+    /* LEVEL TABS */
+    .level-row {
+      display: flex; gap: 0.5rem; overflow-x: auto; padding-bottom: 0.75rem;
+      scrollbar-width: none;
+    }
+    .level-row::-webkit-scrollbar { display: none; }
+    .level-btn {
+      flex-shrink: 0; border: none; background: #F1F5F9; color: var(--text-sub);
+      font-weight: 700; font-size: 0.85rem; padding: 0.55rem 1.1rem; border-radius: 100px;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .level-btn.active {
+      background: var(--primary-gradient); color: white;
+      box-shadow: 0 4px 14px rgba(255, 90, 54, 0.35);
+    }
+
+    /* UNIT HERO BANNER */
+    .unit-hero {
+      background: var(--primary-gradient);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem 1.35rem;
+      color: white;
+      margin: 1rem 0 1.5rem 0;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 12px 30px rgba(255, 90, 54, 0.3);
+    }
+    .unit-hero-circle {
+      position: absolute; right: -20px; top: -20px; width: 140px; height: 140px;
+      background: rgba(255,255,255,0.12); border-radius: 50%; pointer-events: none;
+    }
+    .unit-hero-tag {
+      display: inline-block; background: rgba(255,255,255,0.22); backdrop-filter: blur(6px);
+      padding: 0.3rem 0.8rem; border-radius: 100px; font-size: 0.75rem; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.65rem;
+    }
+    .unit-hero-title { font-size: 1.65rem; font-weight: 800; line-height: 1.2; margin-bottom: 0.35rem; }
+    .unit-hero-sub { font-size: 0.9rem; opacity: 0.95; font-weight: 500; }
+
+    /* ROADMAP ACCORDION CARD */
+    .roadmap-list { display: flex; flex-direction: column; gap: 1.1rem; }
+    .unit-card {
+      background: white; border-radius: var(--radius-md); border: 1.5px solid var(--border);
+      overflow: hidden; transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+    }
+    .unit-card.active {
+      border-color: #FDBA74; box-shadow: 0 8px 24px rgba(255, 90, 54, 0.12);
+    }
+    .unit-card-header {
+      padding: 1.15rem 1.25rem; display: flex; align-items: center; justify-content: space-between;
+      cursor: pointer; user-select: none;
+    }
+    .unit-header-left { display: flex; align-items: center; gap: 1rem; }
+    .unit-num-badge {
+      width: 44px; height: 44px; border-radius: 14px; background: #FFF1EE;
+      color: var(--primary); font-weight: 800; font-size: 1.25rem;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .unit-header-info h4 { font-size: 1.05rem; font-weight: 800; color: #0F172A; }
+    .unit-header-info p { font-size: 0.82rem; color: var(--text-sub); margin-top: 0.15rem; font-weight: 500; }
+    .unit-arrow-icon {
+      font-size: 0.85rem; color: var(--text-muted); transition: transform 0.25s;
+    }
+    .unit-card.active .unit-arrow-icon { transform: rotate(180deg); color: var(--primary); }
+
+    .unit-modules {
+      display: none; padding: 0.5rem 1.25rem 1.25rem 1.25rem;
+      flex-direction: column; gap: 0.65rem; border-top: 1px solid #F1F5F9; background: #FAFAFA;
+    }
+    .unit-card.active .unit-modules { display: flex; }
+
+    .module-item {
+      background: white; border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+      padding: 0.85rem 1rem; display: flex; flex-direction: column; gap: 0.25rem;
+      cursor: pointer; transition: all 0.2s; position: relative;
+    }
+    .module-item:hover { border-color: var(--primary); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+    .module-item:active { transform: scale(0.98); }
+    .module-top { display: flex; align-items: center; justify-content: space-between; }
+    .module-icon { font-size: 1.25rem; }
+    .module-badge {
+      font-size: 0.72rem; font-weight: 800; padding: 0.2rem 0.6rem; border-radius: 100px;
+    }
+    .badge-words { background: #FEF3C7; color: #D97706; }
+    .badge-grammar { background: #EDE9FE; color: #7C3AED; }
+    .badge-text { background: #E0E7FF; color: #4338CA; }
+    .badge-test { background: #DCFCE7; color: #15803D; }
+
+    .unit-card.is-completed {
+      border-color: #A7F3D0 !important;
+      background: #FAFCFA;
+    }
+    .unit-num-badge.is-done {
+      background: #D1FAE5 !important;
+      color: #059669 !important;
+    }
+    .unit-progress-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 0.15rem 0.55rem;
+      border-radius: 100px;
+      margin-left: 0.4rem;
+    }
+    .unit-progress-pill.done {
+      background: #D1FAE5;
+      color: #065F46;
+    }
+    .unit-progress-pill.partial {
+      background: #FEF3C7;
+      color: #92400E;
+    }
+
+    .module-item.is-learned {
+      border-color: #10B981 !important;
+      background: #F0FDF4 !important;
+      box-shadow: 0 2px 8px rgba(16, 185, 129, 0.1);
+    }
+    .module-item.is-learned .module-name {
+      color: #065F46 !important;
+    }
+    .badge-learned {
+      background: #10B981 !important;
+      color: white !important;
+      font-weight: 800 !important;
+    }
+    .btn-toggle-learned {
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      font-size: 1.15rem;
+      line-height: 1;
+      padding: 0.15rem;
+      transition: transform 0.15s;
+    }
+    .btn-toggle-learned:active {
+      transform: scale(0.85);
+    }
+
+    .module-name { font-weight: 800; font-size: 0.95rem; color: #0F172A; margin-top: 0.25rem; }
+    .module-desc { font-size: 0.8rem; color: var(--text-sub); }
+
+    /* LESSON SCREEN */
+    .lesson-screen {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      background: white; z-index: 100; display: flex; flex-direction: column;
+    }
+    .lesson-topbar {
+      padding: 0.85rem 1.25rem; display: flex; align-items: center; gap: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .btn-close-lesson {
+      border: none; background: #F1F5F9; color: var(--text-sub);
+      width: 36px; height: 36px; border-radius: 50%; font-size: 1.1rem;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+    }
+    .progress-bar-wrap {
+      flex: 1; height: 10px; background: #F1F5F9; border-radius: 100px; overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%; width: 0%; background: var(--primary-gradient);
+      border-radius: 100px; transition: width 0.3s ease;
+    }
+
+    .lesson-viewport { flex: 1; overflow-y: auto; padding: 1rem 1.25rem; display: flex; flex-direction: column; justify-content: flex-start; }
+
+    /* WORD TEACHING STEP */
+    .step-word { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 0.85rem; margin: 0 auto; padding: 0.5rem 0; width: 100%; }
+    .step-tag {
+      font-size: 0.75rem; font-weight: 800; color: var(--primary); background: var(--primary-soft);
+      padding: 0.35rem 0.85rem; border-radius: 100px; text-transform: uppercase;
+    }
+    .step-hz { font-family: 'Noto Sans SC', sans-serif; font-size: 4.8rem; font-weight: 800; color: #0F172A; line-height: 1.05; }
+    .step-py { font-size: 1.75rem; font-weight: 800; color: var(--primary); }
+    .btn-audio-pill {
+      border: none; background: var(--primary-soft); color: var(--primary);
+      padding: 0.45rem 1.15rem; border-radius: 100px; font-weight: 700; font-size: 0.9rem;
+      cursor: pointer; display: flex; align-items: center; gap: 0.5rem;
+    }
+    .step-meaning { font-size: 1.4rem; font-weight: 800; color: #1E293B; }
+    .step-example-card {
+      background: #F8FAFC; border: 1.5px solid var(--border); border-radius: var(--radius-md);
+      padding: 1rem 1.15rem; text-align: left; width: 100%; margin-top: 0.35rem;
+    }
+    .ex-label { font-size: 0.72rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 0.25rem; }
+    .ex-hz-text { font-family: 'Noto Sans SC', sans-serif; font-size: 1.15rem; font-weight: 700; color: #1E293B; }
+    .ex-py-text { font-size: 0.85rem; color: var(--primary); font-weight: 600; margin: 0.15rem 0; }
+    .ex-vi-text { font-size: 0.88rem; color: var(--text-sub); }
+
+    /* GRAMMAR TEACHING STEP */
+    .step-grammar { display: flex; flex-direction: column; gap: 1rem; width: 100%; margin: 0 auto; padding: 0.5rem 0; }
+    .grammar-hero-card {
+      background: var(--purple-soft); border: 2px solid #DDD6FE; border-radius: var(--radius-md);
+      padding: 1.35rem; text-align: center;
+    }
+    .grammar-rule-title { font-size: 1.85rem; font-weight: 800; color: var(--purple); font-family: 'Noto Sans SC', sans-serif; }
+    .grammar-explain-vi { font-size: 1rem; color: #4C1D95; font-weight: 700; margin-top: 0.5rem; line-height: 1.4; }
+    .grammar-example-box {
+      background: white; border: 1.5px solid var(--border); border-radius: var(--radius-md); padding: 1.15rem;
+    }
+
+    /* DIALOGUE SIMULATION PLAYER */
+    .step-dialogue-playback { display: flex; flex-direction: column; gap: 1rem; width: 100%; }
+    .video-container {
+      width: 100%; border-radius: var(--radius-md); overflow: hidden; background: #000;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.1); position: relative; aspect-ratio: 16 / 9;
+    }
+    .video-container video { width: 100%; height: 100%; object-fit: cover; }
+    
+    .dialogue-toolbar {
+      display: flex; align-items: center; justify-content: space-between;
+      background: var(--blue-soft); padding: 0.65rem 1rem; border-radius: var(--radius-sm); border: 1px solid #BFDBFE;
+    }
+    .dialogue-toolbar-title { font-size: 0.9rem; font-weight: 800; color: var(--blue); }
+    .btn-autoplay-dlg {
+      border: none; background: var(--blue); color: white; padding: 0.4rem 0.85rem;
+      border-radius: 100px; font-size: 0.8rem; font-weight: 700; cursor: pointer; transition: transform 0.15s;
+    }
+    .btn-autoplay-dlg:active { transform: scale(0.95); }
+
+    .dialogue-bubbles-list { display: flex; flex-direction: column; gap: 0.75rem; }
+    .dialogue-bubble-row {
+      background: white; border: 1.5px solid var(--border); border-radius: var(--radius-md);
+      padding: 0.85rem 1rem; display: flex; align-items: flex-start; gap: 0.85rem;
+      transition: all 0.25s ease; cursor: pointer;
+    }
+    .dialogue-bubble-row.playing {
+      border-color: var(--primary); background: var(--primary-soft);
+      box-shadow: 0 4px 12px rgba(255, 90, 54, 0.15); transform: scale(1.02);
+    }
+    .dlg-avatar {
+      width: 36px; height: 36px; border-radius: 10px; background: #E0E7FF;
+      color: #4338CA; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .dialogue-bubble-row.playing .dlg-avatar { background: var(--primary); color: white; }
+    .dlg-text-hz { font-family: 'Noto Sans SC', sans-serif; font-size: 1.1rem; font-weight: 700; color: #0F172A; }
+    .dlg-text-py { font-size: 0.85rem; color: var(--primary); font-weight: 600; margin: 0.15rem 0; }
+    .dlg-text-vi { font-size: 0.85rem; color: var(--text-sub); }
+    .btn-speak-dlg { border: none; background: transparent; color: var(--primary); cursor: pointer; font-size: 1.15rem; }
+    .dlg-action-area {
+      margin-top: 1.25rem;
+      padding-bottom: 1.5rem;
+      width: 100%;
+    }
+
+    /* QUIZ STEP */
+    .step-quiz { display: flex; flex-direction: column; gap: 0.75rem; width: 100%; margin: 0; padding: 0.25rem 0 0.5rem 0; }
+    .quiz-question-title { font-size: 1.15rem; font-weight: 800; color: #0F172A; text-align: center; }
+    
+    .quiz-prompt-image-box {
+      width: 100%; max-height: 135px; display: flex; justify-content: center; align-items: center;
+      border-radius: var(--radius-md); overflow: hidden; background: #F8FAFC; margin-bottom: 0.25rem;
+      border: 1.5px solid var(--border);
+    }
+    .quiz-prompt-image-box img {
+      max-height: 135px; max-width: 100%; object-fit: contain; border-radius: 10px;
+    }
+
+    .quiz-display-box {
+      text-align: center; padding: 0.8rem 1rem; background: #F8FAFC; border-radius: var(--radius-md);
+      border: 1.5px dashed var(--border); position: relative;
+    }
+    .quiz-big-hz { font-family: 'Noto Sans SC', sans-serif; font-size: 1.75rem; font-weight: 800; color: #0F172A; line-height: 1.3; }
+    .quiz-big-py { font-size: 1.05rem; font-weight: 700; color: var(--primary); margin-top: 0.15rem; }
+    .quiz-prompt-meaning { font-size: 0.9rem; color: var(--text-sub); font-weight: 600; margin-top: 0.25rem; }
+    .quiz-audio-corner {
+      position: absolute; right: 0.85rem; top: 0.85rem; border: none; background: white;
+      width: 36px; height: 36px; border-radius: 50%; box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+      cursor: pointer; font-size: 1.05rem; color: var(--primary);
+    }
+
+    .quiz-options { display: flex; flex-direction: column; gap: 0.65rem; width: 100%; }
+    .quiz-options.is-image-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+    .quiz-opt-btn {
+      background: white; border: 2px solid var(--border); border-radius: var(--radius-md);
+      padding: 0.85rem 1.15rem; font-size: 1.05rem; font-weight: 700; color: var(--text);
+      cursor: pointer; transition: all 0.15s; text-align: left; display: flex; align-items: center; justify-content: space-between;
+    }
+    .quiz-opt-btn.is-img {
+      padding: 0.4rem; display: flex; align-items: center; justify-content: center;
+      aspect-ratio: 1 / 1; overflow: hidden; background: #FAFAFA;
+    }
+    .quiz-opt-btn.is-img img {
+      width: 100%; height: 100%; object-fit: cover; border-radius: 12px; pointer-events: none;
+    }
+    .quiz-opt-btn:active { transform: scale(0.97); }
+    .quiz-opt-btn.correct { background: var(--success-soft) !important; border-color: var(--success) !important; color: #065F46 !important; }
+    .quiz-opt-btn.wrong { background: var(--danger-soft) !important; border-color: var(--danger) !important; color: #991B1B !important; }
+
+    /* UNSCRAMBLE QUIZ */
+    .unscramble-area { display: flex; flex-direction: column; gap: 0.85rem; width: 100%; margin-top: 0.35rem; }
+    .unscramble-target-box {
+      min-height: 62px; padding: 0.65rem 0.85rem; background: #F8FAFC; border: 2px dashed #94A3B8;
+      border-radius: var(--radius-md); display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; justify-content: center;
+      transition: all 0.2s;
+    }
+    .unscramble-target-box.correct { border-color: var(--success) !important; background: var(--success-soft) !important; }
+    .unscramble-target-box.wrong { border-color: var(--danger) !important; background: var(--danger-soft) !important; }
+    .unscramble-bank-box {
+      display: flex; flex-wrap: wrap; gap: 0.55rem; justify-content: center; padding: 0.35rem 0;
+    }
+    .unscramble-chip {
+      background: white; border: 2px solid var(--border); border-radius: 100px;
+      padding: 0.55rem 1.15rem; font-size: 1.1rem; font-weight: 700; color: #0F172A;
+      cursor: pointer; transition: all 0.15s; font-family: 'Noto Sans SC', sans-serif;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06); user-select: none;
+    }
+    .unscramble-chip:active { transform: scale(0.95); }
+    .unscramble-chip.in-target {
+      background: var(--blue-soft); border-color: var(--blue); color: #1E3A8A;
+    }
+    .unscramble-chip.used {
+      opacity: 0.2; pointer-events: none; border-style: dashed;
+    }
+
+    /* SPEAKING / PRONUNCIATION */
+    .speak-box {
+      display: flex; flex-direction: column; align-items: center; gap: 0.85rem; text-align: center; margin-top: 0.75rem;
+    }
+    .speak-btn-large {
+      background: var(--primary-soft); border: 2px solid var(--primary); color: var(--primary);
+      border-radius: 100px; padding: 0.75rem 1.5rem; font-size: 1.05rem; font-weight: 800;
+      cursor: pointer; display: flex; align-items: center; gap: 0.5rem; transition: all 0.15s;
+    }
+    .speak-btn-large:active { transform: scale(0.96); }
+
+    /* FOOTER */
+    .lesson-footer { padding: 0.85rem 1.25rem 1rem 1.25rem; border-top: 1px solid var(--border); background: white; z-index: 20; }
+    .btn-continue {
+      width: 100%; border: none; background: var(--primary-gradient); color: white;
+      font-size: 1.1rem; font-weight: 800; padding: 0.95rem; border-radius: 100px;
+      cursor: pointer; box-shadow: 0 4px 16px rgba(255, 90, 54, 0.3); transition: all 0.2s;
+    }
+    .btn-continue:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* VICTORY */
+    .victory-screen {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      background: white; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 2rem; text-align: center; z-index: 120;
+    }
+    .victory-badge { font-size: 4.5rem; margin-bottom: 1rem; animation: bounce 1s infinite alternate; }
+    @keyframes bounce { 0% { transform: translateY(0); } 100% { transform: translateY(-10px); } }
+    .victory-title { font-size: 1.85rem; font-weight: 800; color: #0F172A; margin-bottom: 0.5rem; }
+    .victory-desc { font-size: 1rem; color: var(--text-sub); margin-bottom: 2rem; }
+    .stats-row-box { display: flex; gap: 1rem; width: 100%; margin-bottom: 2.5rem; }
+    .stat-card {
+      flex: 1; background: #F8FAFC; border: 1.5px solid var(--border); border-radius: var(--radius-md);
+      padding: 1rem 0.5rem; text-align: center;
+    }
+    .stat-val { font-size: 1.6rem; font-weight: 800; color: var(--primary); }
+    .stat-lbl { font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-top: 0.25rem; }
+
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+
+  <div class="app-viewport">
+    <header class="app-header">
+      <div class="header-left">
+        <div class="brand-icon">超</div>
+        <div class="brand-name">SuperChinese</div>
+      </div>
+      <div class="streak-badge">
+        <span>🔥</span>
+        <span id="streakCount">1 ngày</span>
+      </div>
+    </header>
+
+    <!-- ROADMAP SCREEN -->
+    <div class="app-content" id="screenHome">
+      <div class="level-row" id="levelRow">
+        <button class="level-btn active" onclick="switchLevel('L1')">Level 1</button>
+        <button class="level-btn" onclick="switchLevel('L2')">Level 2</button>
+        <button class="level-btn" onclick="switchLevel('L3')">Level 3</button>
+        <button class="level-btn" onclick="switchLevel('L4')">Level 4</button>
+        <button class="level-btn" onclick="switchLevel('L5')">Level 5</button>
+        <button class="level-btn" onclick="switchLevel('L6')">Level 6</button>
+        <button class="level-btn" onclick="switchLevel('L7')">Level 7</button>
+        <button class="level-btn" onclick="switchLevel('L8')">Level 8</button>
+      </div>
+
+      <div class="unit-hero">
+        <div class="unit-hero-tag" id="heroLevelTag">CẤP ĐỘ 1 • HSK 1</div>
+        <h2 class="unit-hero-title" id="heroTitle">Khởi Đầu Giao Tiếp</h2>
+        <p class="unit-hero-sub" id="heroSubtitle">Có video mô phỏng, nghe hội thoại trước khi làm bài</p>
+        <div class="unit-hero-circle"></div>
+      </div>
+
+      <!-- Roadmap with Accordion 4-Part Modules -->
+      <div class="roadmap-list" id="roadmapList"></div>
+    </div>
+
+    <!-- GUIDED LESSON RUNNER -->
+    <div class="lesson-screen hidden" id="screenLesson">
+      <div class="lesson-topbar">
+        <button class="btn-close-lesson" onclick="exitLesson()">✕</button>
+        <div class="progress-bar-wrap">
+          <div class="progress-bar-fill" id="lessonProgress"></div>
+        </div>
+      </div>
+
+      <div class="lesson-viewport" id="lessonViewport"></div>
+
+      <div class="lesson-footer">
+        <button class="btn-continue" id="btnContinue" onclick="handleContinueClick()">Tiếp Tục ➔</button>
+      </div>
+    </div>
+
+    <!-- VICTORY SCREEN -->
+    <div class="victory-screen hidden" id="screenVictory">
+      <div class="victory-badge">🎉</div>
+      <h2 class="victory-title">Hoàn Thành Bài Học!</h2>
+      <p class="victory-desc">Bạn đã hoàn thành xuất sắc phần học này.</p>
+      
+      <div class="stats-row-box">
+        <div class="stat-card">
+          <div class="stat-val" id="vicItemsCount">5</div>
+          <div class="stat-lbl">Nội dung học</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val" id="vicAccuracy">100%</div>
+          <div class="stat-lbl">Độ chính xác</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val">+30</div>
+          <div class="stat-lbl">Điểm EXP</div>
+        </div>
+      </div>
+
+      <button class="btn-continue" onclick="finishVictory()">Hoàn Thành ➔</button>
+    </div>
+  </div>
+
+  <!-- COMPLETE COMPILED LESSON DATA -->
+  <script src="lessons_data.js"></script>
+
+  <script>
+    const AudioEngine = {
+      ctx: null,
+      currentAudio: null,
+      init() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          if (AudioContext) this.ctx = new AudioContext();
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      },
+      playTone(freq, type = 'sine', duration = 0.2) {
+        if (!this.ctx) return;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+        gain.gain.setValueAtTime(0.18, this.ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start();
+        osc.stop(this.ctx.currentTime + duration);
+      },
+      playCorrect() {
+        this.playTone(587.33, 'triangle', 0.12);
+        setTimeout(() => this.playTone(880, 'triangle', 0.25), 100);
+      },
+      playWrong() {
+        this.playTone(220, 'sawtooth', 0.2);
+        setTimeout(() => this.playTone(180, 'sawtooth', 0.3), 150);
+      },
+      playUrlOrTTS(url, text, onEnded) {
+        if (this.currentAudio) {
+          this.currentAudio.pause();
+          this.currentAudio = null;
+        }
+        if (url && url.startsWith('http')) {
+          const a = new Audio(url);
+          if (onEnded) a.onended = onEnded;
+          a.play().catch(() => {
+            this.speakTTS(text, onEnded);
+          });
+          this.currentAudio = a;
+        } else {
+          this.speakTTS(text, onEnded);
+        }
+      },
+      speakTTS(text, onEnded) {
+        if ('speechSynthesis' in window && text) {
+          window.speechSynthesis.cancel();
+          const u = new SpeechSynthesisUtterance(text);
+          u.lang = 'zh-CN';
+          u.rate = 0.85;
+          if (onEnded) u.onend = onEnded;
+          window.speechSynthesis.speak(u);
+        } else {
+          if (onEnded) onEnded();
+        }
+      }
+    };
+
+    const ProgressManager = {
+      KEY: 'sc_learned_progress_v1',
+      data: null,
+      load() {
+        if (!this.data) {
+          try {
+            const raw = localStorage.getItem(this.KEY);
+            this.data = raw ? JSON.parse(raw) : {};
+          } catch (e) {
+            this.data = {};
+          }
+        }
+        return this.data;
+      },
+      save() {
+        try {
+          localStorage.setItem(this.KEY, JSON.stringify(this.data));
+        } catch (e) {}
+      },
+      isCompleted(lvl, unit, mod) {
+        this.load();
+        return !!(this.data[lvl] && this.data[lvl][unit] && this.data[lvl][unit][mod]);
+      },
+      markCompleted(lvl, unit, mod) {
+        this.load();
+        if (!this.data[lvl]) this.data[lvl] = {};
+        if (!this.data[lvl][unit]) this.data[lvl][unit] = {};
+        this.data[lvl][unit][mod] = true;
+        this.save();
+      },
+      toggle(lvl, unit, mod) {
+        this.load();
+        if (!this.data[lvl]) this.data[lvl] = {};
+        if (!this.data[lvl][unit]) this.data[lvl][unit] = {};
+        this.data[lvl][unit][mod] = !this.data[lvl][unit][mod];
+        this.save();
+      },
+      getUnitStats(lvl, unit) {
+        this.load();
+        const u = (this.data[lvl] && this.data[lvl][unit]) || {};
+        const mods = ['words', 'grammar', 'text', 'test'];
+        const done = mods.filter(m => u[m]).length;
+        return { done, total: mods.length, isAllDone: done === mods.length };
+      },
+      getLevelStats(lvl) {
+        this.load();
+        const lvlData = window.LESSONS_DATA[lvl] || {};
+        const unitKeys = Object.keys(lvlData);
+        const total = unitKeys.length * 4;
+        let done = 0;
+        for (const u of unitKeys) {
+          const stats = this.getUnitStats(lvl, u);
+          done += stats.done;
+        }
+        const percent = total > 0 ? Math.round((done / total) * 100) : 0;
+        return { done, total, percent };
+      },
+      getTotalLearnedCount() {
+        this.load();
+        let count = 0;
+        for (const l in this.data) {
+          for (const u in this.data[l]) {
+            for (const m in this.data[l][u]) {
+              if (this.data[l][u][m]) count++;
+            }
+          }
+        }
+        return count;
+      }
+    };
+
+    let currentLevel = 'L1';
+    let currentUnit = 1;
+    let currentModule = null;
+    let activeUnitCard = 1;
+    let lessonSteps = [];
+    let stepIndex = 0;
+    let currentQuizAnswered = false;
+    let correctCount = 0;
+    let quizTotalCount = 0;
+    let continueActionOverride = null;
+
+    const LEVEL_TITLES = {
+      'L1': { tag: 'CẤP ĐỘ 1 • HSK 1', title: 'Khởi Đầu Giao Tiếp' },
+      'L2': { tag: 'CẤP ĐỘ 2 • HSK 2', title: 'Giao Tiếp Thường Ngày' },
+      'L3': { tag: 'CẤP ĐỘ 3 • HSK 3', title: 'Mở Rộng Chủ Đề' },
+      'L4': { tag: 'CẤP ĐỘ 4 • HSK 4', title: 'Đàm Thoại Lưu Loát' },
+      'L5': { tag: 'CẤP ĐỘ 5 • HSK 5', title: 'Tiếng Trung Chuyên Sâu' },
+      'L6': { tag: 'CẤP ĐỘ 6 • HSK 6', title: 'Thành Thạo Bản Xứ' },
+      'L7': { tag: 'CẤP ĐỘ 7 • HSK 3.0', title: 'Hán Ngữ Nâng Cao' },
+      'L8': { tag: 'CẤP ĐỘ 8 • HSK 3.0', title: 'Bậc Thầy Ngôn Ngữ' }
+    };
+
+    function init() {
+      if (!window.LESSONS_DATA) {
+        alert("Chưa tìm thấy tệp lessons_data.js! Hãy đảm bảo file nằm cùng thư mục.");
+        return;
+      }
+      renderRoadmap();
+    }
+
+    function switchLevel(lvl) {
+      currentLevel = lvl;
+      activeUnitCard = 1;
+      document.querySelectorAll('.level-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.innerText === 'Level ' + lvl.replace('L',''));
+      });
+      renderRoadmap();
+    }
+
+    function isImageUrl(str) {
+      if (!str || typeof str !== 'string') return false;
+      return str.includes('.png') || str.includes('.jpg') || str.includes('.jpeg') || str.includes('upload/');
+    }
+
+    function toggleUnitCard(unitNum) {
+      activeUnitCard = activeUnitCard === unitNum ? null : unitNum;
+      renderRoadmap();
+    }
+
+    function toggleLearnedModule(e, lvl, u, mod) {
+      e.stopPropagation();
+      ProgressManager.toggle(lvl, u, mod);
+      renderRoadmap();
+    }
+
+    function renderRoadmap() {
+      const lvlData = window.LESSONS_DATA[currentLevel] || {};
+      const units = Object.keys(lvlData).map(Number).sort((a,b) => a - b);
+      
+      const meta = LEVEL_TITLES[currentLevel] || { tag: currentLevel, title: 'Khóa Học Tiếng Trung' };
+      document.getElementById('heroLevelTag').innerText = meta.tag;
+      document.getElementById('heroTitle').innerText = meta.title;
+
+      const lvlProg = ProgressManager.getLevelStats(currentLevel);
+      const subEl = document.getElementById('heroSubtitle');
+      if (subEl) {
+        subEl.innerText = `Đã hoàn thành ${lvlProg.done}/${lvlProg.total} phần học (${lvlProg.percent}%)`;
+      }
+
+      const totalLearned = ProgressManager.getTotalLearnedCount();
+      const streakEl = document.getElementById('streakCount');
+      if (streakEl) streakEl.innerText = `${totalLearned} bài đã học`;
+
+      const listContainer = document.getElementById('roadmapList');
+      listContainer.innerHTML = '';
+
+      units.forEach(u => {
+        const uInfo = lvlData[u];
+        const wCount = (uInfo.words && uInfo.words.list ? uInfo.words.list.length : 0);
+        const gCount = (uInfo.grammar && uInfo.grammar.rules ? uInfo.grammar.rules.length : 0);
+        const sCount = (uInfo.text && uInfo.text.sentences ? uInfo.text.sentences.length : 0);
+        const textQuizCount = (uInfo.text && uInfo.text.quizzes ? uInfo.text.quizzes.length : 0);
+        const tCount = (uInfo.test && uInfo.test.quizzes ? uInfo.test.quizzes.length : 0);
+        const topic = (uInfo.text && uInfo.text.topic) ? ` • ${uInfo.text.topic}` : '';
+
+        const uProg = ProgressManager.getUnitStats(currentLevel, u);
+        const isWordsDone = ProgressManager.isCompleted(currentLevel, u, 'words');
+        const isGrammarDone = ProgressManager.isCompleted(currentLevel, u, 'grammar');
+        const isTextDone = ProgressManager.isCompleted(currentLevel, u, 'text');
+        const isTestDone = ProgressManager.isCompleted(currentLevel, u, 'test');
+
+        const card = document.createElement('div');
+        const isActive = activeUnitCard === u;
+        card.className = `unit-card ${isActive ? 'active' : ''} ${uProg.isAllDone ? 'is-completed' : ''}`;
+
+        let progressPill = '';
+        if (uProg.isAllDone) {
+          progressPill = `<span class="unit-progress-pill done">✓ Đã xong 4/4</span>`;
+        } else if (uProg.done > 0) {
+          progressPill = `<span class="unit-progress-pill partial">Đã học ${uProg.done}/4</span>`;
+        }
+
+        card.innerHTML = `
+          <div class="unit-card-header" onclick="toggleUnitCard(${u})">
+            <div class="unit-header-left">
+              <div class="unit-num-badge ${uProg.isAllDone ? 'is-done' : ''}">${uProg.isAllDone ? '✓' : u}</div>
+              <div class="unit-header-info">
+                <h4>Bài ${u}${topic} ${progressPill}</h4>
+                <p>Từ vựng, Ngữ pháp, Hội thoại & Kiểm tra</p>
+              </div>
+            </div>
+            <div class="unit-arrow-icon">▼</div>
+          </div>
+          
+          <div class="unit-modules">
+            <!-- 1. TỪ VỰNG -->
+            <div class="module-item words ${isWordsDone ? 'is-learned' : ''}" onclick="launchSubModule(${u}, 'words')">
+              <div class="module-top">
+                <span class="module-icon">📖</span>
+                <div style="display:flex; align-items:center; gap:0.4rem;">
+                  <span class="module-badge ${isWordsDone ? 'badge-learned' : 'badge-words'}">${isWordsDone ? '✓ Đã học' : `${wCount} từ`}</span>
+                  <button class="btn-toggle-learned" title="${isWordsDone ? 'Đánh dấu chưa học' : 'Đánh dấu đã học'}" onclick="toggleLearnedModule(event, '${currentLevel}', ${u}, 'words')">${isWordsDone ? '✅' : '⚪'}</button>
+                </div>
+              </div>
+              <div class="module-name">${isWordsDone ? '✓ ' : ''}Từ Vựng</div>
+              <div class="module-desc">Học từ mới & bài tập củng cố</div>
+            </div>
+
+            <!-- 2. NGỮ PHÁP -->
+            <div class="module-item grammar ${isGrammarDone ? 'is-learned' : ''}" onclick="launchSubModule(${u}, 'grammar')">
+              <div class="module-top">
+                <span class="module-icon">💡</span>
+                <div style="display:flex; align-items:center; gap:0.4rem;">
+                  <span class="module-badge ${isGrammarDone ? 'badge-learned' : 'badge-grammar'}">${isGrammarDone ? '✓ Đã học' : `${gCount || 1} cấu trúc`}</span>
+                  <button class="btn-toggle-learned" title="${isGrammarDone ? 'Đánh dấu chưa học' : 'Đánh dấu đã học'}" onclick="toggleLearnedModule(event, '${currentLevel}', ${u}, 'grammar')">${isGrammarDone ? '✅' : '⚪'}</button>
+                </div>
+              </div>
+              <div class="module-name">${isGrammarDone ? '✓ ' : ''}Ngữ Pháp</div>
+              <div class="module-desc">Quy tắc câu & bài tập áp dụng</div>
+            </div>
+
+            <!-- 3. HỘI THOẠI (CÓ VIDEO & PHÁT HỘI THOẠI) -->
+            <div class="module-item text ${isTextDone ? 'is-learned' : ''}" onclick="launchSubModule(${u}, 'text')">
+              <div class="module-top">
+                <span class="module-icon">🎬</span>
+                <div style="display:flex; align-items:center; gap:0.4rem;">
+                  <span class="module-badge ${isTextDone ? 'badge-learned' : 'badge-text'}">${isTextDone ? '✓ Đã học' : `${sCount} câu • ${textQuizCount} bài`}</span>
+                  <button class="btn-toggle-learned" title="${isTextDone ? 'Đánh dấu chưa học' : 'Đánh dấu đã học'}" onclick="toggleLearnedModule(event, '${currentLevel}', ${u}, 'text')">${isTextDone ? '✅' : '⚪'}</button>
+                </div>
+              </div>
+              <div class="module-name">${isTextDone ? '✓ ' : ''}Hội Thoại</div>
+              <div class="module-desc">Video mô phỏng, nghe & kiểm tra đọc hiểu</div>
+            </div>
+
+            <!-- 4. BÀI KIỂM TRA -->
+            <div class="module-item test ${isTestDone ? 'is-learned' : ''}" onclick="launchSubModule(${u}, 'test')">
+              <div class="module-top">
+                <span class="module-icon">📝</span>
+                <div style="display:flex; align-items:center; gap:0.4rem;">
+                  <span class="module-badge ${isTestDone ? 'badge-learned' : 'badge-test'}">${isTestDone ? '✓ Đã làm' : `${tCount || 10} câu`}</span>
+                  <button class="btn-toggle-learned" title="${isTestDone ? 'Đánh dấu chưa học' : 'Đánh dấu đã học'}" onclick="toggleLearnedModule(event, '${currentLevel}', ${u}, 'test')">${isTestDone ? '✅' : '⚪'}</button>
+                </div>
+              </div>
+              <div class="module-name">${isTestDone ? '✓ ' : ''}Kiểm Tra</div>
+              <div class="module-desc">Nghe ghi âm & chọn đáp án</div>
+            </div>
+          </div>
+        `;
+        listContainer.appendChild(card);
+      });
+    }
+
+    /* LAUNCH SPECIFIC MODULE */
+    function launchSubModule(unitNum, modType) {
+      AudioEngine.init();
+      currentUnit = unitNum;
+      currentModule = modType;
+
+      const uData = window.LESSONS_DATA[currentLevel][currentUnit];
+      if (!uData) return;
+
+      lessonSteps = [];
+      correctCount = 0;
+      quizTotalCount = 0;
+      continueActionOverride = null;
+
+      if (modType === 'words') {
+        const words = (uData.words && uData.words.list) || [];
+        const quizzes = (uData.words && uData.words.quizzes) || [];
+        let qIdx = 0;
+        words.forEach(w => {
+          lessonSteps.push({ type: 'word', data: w });
+          if (quizzes[qIdx]) lessonSteps.push({ type: 'quiz', data: quizzes[qIdx++] });
+        });
+        while (qIdx < quizzes.length) {
+          lessonSteps.push({ type: 'quiz', data: quizzes[qIdx++] });
+        }
+      } else if (modType === 'grammar') {
+        const rules = (uData.grammar && uData.grammar.rules) || [];
+        let quizzes = (uData.grammar && uData.grammar.quizzes) || [];
+        if (quizzes.length === 0 && uData.test && uData.test.quizzes) {
+          quizzes = uData.test.quizzes.slice(0, 5);
+        }
+        rules.forEach(r => {
+          lessonSteps.push({ type: 'grammar', data: r });
+        });
+        quizzes.forEach(q => {
+          lessonSteps.push({ type: 'quiz', data: q });
+        });
+      } else if (modType === 'text') {
+        // STEP 1 IS FULL VIDEO + DIALOGUE PLAYBACK; STEP 2+ ARE COMPREHENSION QUIZZES
+        const sentences = (uData.text && uData.text.sentences) || [];
+        const topic = (uData.text && uData.text.topic) || 'Bài khóa đối thoại';
+        const video = (uData.text && uData.text.video) || '';
+        let quizzes = (uData.text && uData.text.quizzes) || [];
+
+        // Fallback guarantee so there are always comprehension exercises
+        if (quizzes.length === 0 && uData.test && uData.test.quizzes && uData.test.quizzes.length > 0) {
+          quizzes = uData.test.quizzes.slice(0, 6);
+        }
+
+        // Add the Full Dialogue Simulation step first!
+        lessonSteps.push({
+          type: 'dialogue_playback',
+          data: { topic, video, sentences }
+        });
+
+        // Followed by comprehension quizzes
+        quizzes.forEach(q => {
+          lessonSteps.push({ type: 'quiz', data: q });
+        });
+      } else if (modType === 'test') {
+        let quizzes = (uData.test && uData.test.quizzes) || [];
+        if (quizzes.length === 0 && uData.words && uData.words.quizzes) {
+          quizzes = uData.words.quizzes.slice(0, 10);
+        }
+        quizzes.forEach(q => {
+          lessonSteps.push({ type: 'quiz', data: q });
+        });
+      }
+
+      if (lessonSteps.length === 0) {
+        alert("Phần học này đang được chuẩn bị hoặc không có bài tập!");
+        return;
+      }
+
+      stepIndex = 0;
+      document.getElementById('screenLesson').classList.remove('hidden');
+      renderCurrentStep();
+    }
+
+    function handleContinueClick() {
+      if (continueActionOverride) {
+        continueActionOverride();
+      } else {
+        advanceStep();
+      }
+    }
+
+    function renderCurrentStep() {
+      continueActionOverride = null;
+
+      if (stepIndex >= lessonSteps.length) {
+        showVictoryScreen();
+        return;
+      }
+
+      const progress = ((stepIndex) / lessonSteps.length) * 100;
+      document.getElementById('lessonProgress').style.width = `${progress}%`;
+
+      const step = lessonSteps[stepIndex];
+      const viewport = document.getElementById('lessonViewport');
+      const btn = document.getElementById('btnContinue');
+      const footer = document.querySelector('.lesson-footer');
+      if (step.type === 'dialogue_playback') {
+        if (footer) footer.style.display = 'none';
+      } else {
+        if (footer) footer.style.display = '';
+      }
+
+      if (step.type === 'word') {
+        currentQuizAnswered = true;
+        btn.disabled = false;
+        btn.innerText = "Tiếp Tục ➔";
+
+        const w = step.data;
+        viewport.innerHTML = `
+          <div class="step-word">
+            <div class="step-tag">${w.type || 'Từ Vựng'}</div>
+            <div class="step-hz">${w.hz}</div>
+            <div class="step-py">${w.py}</div>
+            <button class="btn-audio-pill" onclick="AudioEngine.playUrlOrTTS('${w.audio}', '${w.hz}')">
+              🔊 Nghe phát âm
+            </button>
+            <div class="step-meaning">${w.vi}</div>
+
+            ${w.example ? `
+              <div class="step-example-card">
+                <div class="ex-label">Ví dụ thực tế</div>
+                <div class="ex-hz-text">${w.example.hz}</div>
+                <div class="ex-py-text">${w.example.py}</div>
+                <div class="ex-vi-text">${w.example.vi}</div>
+              </div>
+            ` : ''}
+          </div>
+        `;
+        AudioEngine.playUrlOrTTS(w.audio, w.hz);
+
+      } else if (step.type === 'grammar') {
+        currentQuizAnswered = true;
+        btn.disabled = false;
+        btn.innerText = "Tiếp Tục ➔";
+
+        const g = step.data;
+        viewport.innerHTML = `
+          <div class="step-grammar">
+            <div class="step-tag" style="background:var(--purple-soft); color:var(--purple); align-self:center;">Cấu Trúc Ngữ Pháp</div>
+            <div class="grammar-hero-card">
+              <div class="grammar-rule-title">${g.rule}</div>
+              <div class="grammar-explain-vi">${g.explain || 'Cấu trúc ngữ pháp quan trọng'}</div>
+            </div>
+
+            ${g.example ? `
+              <div class="grammar-example-box">
+                <div class="ex-label">Mẫu câu áp dụng</div>
+                <div class="ex-hz-text">${g.example.hz}</div>
+                <div class="ex-py-text">${g.example.py}</div>
+                <button class="btn-audio-pill" style="margin-top:0.65rem;" onclick="AudioEngine.playUrlOrTTS('${g.example.audio}', '${g.example.hz}')">
+                  🔊 Nghe câu mẫu
+                </button>
+              </div>
+            ` : ''}
+          </div>
+        `;
+
+      } else if (step.type === 'dialogue_playback') {
+        currentQuizAnswered = true;
+        btn.disabled = false;
+        btn.innerText = "Bắt Đầu Kiểm Tra Đọc Hiểu ➔";
+
+        const dlg = step.data;
+        let videoHtml = '';
+        if (dlg.video) {
+          videoHtml = `
+            <div class="video-container">
+              <video id="dlgVideo" src="${dlg.video}" controls playsinline autoplay></video>
+            </div>
+          `;
+        }
+
+        let bubblesHtml = dlg.sentences.map((s, idx) => `
+          <div class="dialogue-bubble-row" id="dlgRow_${idx}" onclick="playDialogueSentence(${idx})">
+            <div class="dlg-avatar">${s.role.charAt(0)}</div>
+            <div style="flex:1;">
+              <div class="dlg-text-hz">${s.hz}</div>
+              <div class="dlg-text-py">${s.py}</div>
+              <div class="dlg-text-vi">${s.vi}</div>
+            </div>
+            <button class="btn-speak-dlg" onclick="event.stopPropagation(); playDialogueSentence(${idx})">🔊</button>
+          </div>
+        `).join('');
+
+        viewport.innerHTML = `
+          <div class="step-dialogue-playback">
+            <div class="dialogue-toolbar">
+              <div class="dialogue-toolbar-title">🎬 Bài Khóa: ${dlg.topic}</div>
+              <button class="btn-autoplay-dlg" id="btnAutoPlayDlg" onclick="autoPlayEntireDialogue()">▶ Phát Toàn Bộ</button>
+            </div>
+            ${videoHtml}
+            <div class="dialogue-bubbles-list">
+              ${bubblesHtml}
+            </div>
+            <div class="dlg-action-area">
+              <button class="btn-continue" onclick="advanceStep()">
+                Bắt Đầu Kiểm Tra Đọc Hiểu ➔
+              </button>
+            </div>
+          </div>
+        `;
+
+        if (!dlg.video) {
+          setTimeout(autoPlayEntireDialogue, 400);
+        }
+
+      } else if (step.type === 'quiz') {
+        const q = step.data;
+        quizTotalCount++;
+
+        if (q.audio) {
+          AudioEngine.playUrlOrTTS(q.audio, q.prompt);
+        }
+
+        if (q.quizType === 'unscramble' && q.words && q.words.length > 0) {
+          currentQuizAnswered = false;
+          btn.disabled = true;
+          btn.innerText = "Kiểm Tra";
+          renderUnscrambleQuiz(viewport, q, btn);
+        } else if (q.quizType === 'speak') {
+          currentQuizAnswered = true;
+          btn.disabled = false;
+          btn.innerText = "Tiếp Tục ➔";
+          renderSpeakQuiz(viewport, q, btn);
+        } else {
+          currentQuizAnswered = false;
+          btn.disabled = true;
+          btn.innerText = "Kiểm Tra";
+          renderChoiceQuiz(viewport, q, btn);
+        }
+      }
+    }
+
+    /* CHOICE / TRUE-FALSE QUIZ */
+    function renderChoiceQuiz(viewport, q, btn) {
+      const hasImages = q.options && q.options.some(isImageUrl);
+      const promptImg = q.image ? `
+        <div class="quiz-prompt-image-box">
+          <img src="${q.image}" alt="Hình minh họa" loading="lazy" />
+        </div>
+      ` : '';
+
+      viewport.innerHTML = `
+        <div class="step-quiz">
+          <div class="quiz-question-title">${q.title || (hasImages ? 'Chọn hình ảnh đúng:' : 'Chọn đáp án đúng:')}</div>
+          ${promptImg}
+          <div class="quiz-display-box">
+            <div class="quiz-big-hz">${q.prompt || 'Nghe và chọn'}</div>
+            ${q.py ? `<div class="quiz-big-py">${q.py}</div>` : ''}
+            ${q.meaning ? `<div class="quiz-prompt-meaning">${q.meaning}</div>` : ''}
+            ${q.audio ? `<button class="quiz-audio-corner" onclick="AudioEngine.playUrlOrTTS('${q.audio}', '${q.prompt}')">🔊</button>` : ''}
+          </div>
+          <div class="quiz-options ${hasImages ? 'is-image-grid' : ''}" id="stepQuizOptions"></div>
+        </div>
+      `;
+
+      const optBox = document.getElementById('stepQuizOptions');
+      (q.options || []).forEach((optText, idx) => {
+        const b = document.createElement('button');
+        if (isImageUrl(optText)) {
+          b.className = 'quiz-opt-btn is-img';
+          b.innerHTML = `<img src="${optText}" alt="Option ${idx + 1}" loading="lazy" />`;
+        } else {
+          b.className = 'quiz-opt-btn';
+          b.innerText = optText;
+        }
+        b.onclick = () => selectQuizOption(b, idx, q.answer);
+        optBox.appendChild(b);
+      });
+    }
+
+    function selectQuizOption(btn, chosen, correct) {
+      if (currentQuizAnswered) return;
+      currentQuizAnswered = true;
+
+      const allBtns = document.querySelectorAll('.quiz-opt-btn');
+      allBtns.forEach(b => b.disabled = true);
+
+      if (chosen === correct) {
+        btn.classList.add('correct');
+        AudioEngine.playCorrect();
+        correctCount++;
+      } else {
+        btn.classList.add('wrong');
+        if (allBtns[correct]) allBtns[correct].classList.add('correct');
+        AudioEngine.playWrong();
+      }
+
+      const nextBtn = document.getElementById('btnContinue');
+      nextBtn.disabled = false;
+      nextBtn.innerText = "Tiếp Tục ➔";
+    }
+
+    /* UNSCRAMBLE SENTENCE QUIZ */
+    let unscrambleState = {
+      slots: [],
+      words: [],
+      correctOrder: []
+    };
+
+    function renderUnscrambleQuiz(viewport, q, btn) {
+      unscrambleState = {
+        slots: [],
+        words: q.words,
+        correctOrder: q.correctOrder || q.words.map((_, i) => i)
+      };
+
+      const promptImg = q.image ? `
+        <div class="quiz-prompt-image-box">
+          <img src="${q.image}" alt="Hình minh họa" loading="lazy" />
+        </div>
+      ` : '';
+
+      viewport.innerHTML = `
+        <div class="step-quiz">
+          <div class="quiz-question-title">${q.title || 'Sắp xếp từ thành câu:'}</div>
+          ${promptImg}
+          <div class="quiz-display-box" style="padding:1rem;">
+            <div class="quiz-big-hz" style="font-size:1.35rem; color:var(--text);">${q.prompt || 'Ghép các từ theo thứ tự chính xác'}</div>
+            ${q.py ? `<div class="quiz-big-py" style="font-size:1rem;">${q.py}</div>` : ''}
+            ${q.meaning ? `<div class="quiz-prompt-meaning">${q.meaning}</div>` : ''}
+            ${q.audio ? `<button class="quiz-audio-corner" onclick="AudioEngine.playUrlOrTTS('${q.audio}', '')">🔊</button>` : ''}
+          </div>
+
+          <div class="unscramble-area">
+            <div class="unscramble-target-box" id="unscrambleTarget" onclick="popLastUnscrambleWord()">
+              <span id="targetPlaceholder" style="color:var(--text-muted); font-size:0.9rem; font-weight:600;">Chạm vào các từ bên dưới để ghép câu</span>
+            </div>
+            <div class="unscramble-bank-box" id="unscrambleBank"></div>
+          </div>
+        </div>
+      `;
+
+      updateUnscrambleUI();
+    }
+
+    function updateUnscrambleUI() {
+      const targetBox = document.getElementById('unscrambleTarget');
+      const bankBox = document.getElementById('unscrambleBank');
+      if (!targetBox || !bankBox) return;
+
+      if (unscrambleState.slots.length === 0) {
+        targetBox.innerHTML = '<span id="targetPlaceholder" style="color:var(--text-muted); font-size:0.9rem; font-weight:600;">Chạm vào các từ bên dưới để ghép câu</span>';
+      } else {
+        targetBox.innerHTML = '';
+        unscrambleState.slots.forEach((wordIdx, slotIdx) => {
+          const w = unscrambleState.words[wordIdx];
+          const chip = document.createElement('button');
+          chip.className = 'unscramble-chip in-target';
+          chip.innerText = w.text;
+          chip.onclick = (e) => {
+            e.stopPropagation();
+            removeWordFromTarget(slotIdx);
+          };
+          targetBox.appendChild(chip);
+        });
+      }
+
+      bankBox.innerHTML = '';
+      unscrambleState.words.forEach((w, wordIdx) => {
+        const isUsed = unscrambleState.slots.includes(wordIdx);
+        const chip = document.createElement('button');
+        chip.className = `unscramble-chip ${isUsed ? 'used' : ''}`;
+        chip.innerText = w.text;
+        chip.onclick = () => {
+          if (!isUsed) addWordToTarget(wordIdx);
+        };
+        bankBox.appendChild(chip);
+      });
+
+      const btn = document.getElementById('btnContinue');
+      if (unscrambleState.slots.length === unscrambleState.words.length) {
+        btn.disabled = false;
+        btn.innerText = "Kiểm Tra";
+        continueActionOverride = verifyUnscrambleSentence;
+      } else {
+        btn.disabled = true;
+        btn.innerText = "Kiểm Tra";
+        continueActionOverride = null;
+      }
+    }
+
+    function addWordToTarget(wordIdx) {
+      if (currentQuizAnswered) return;
+      unscrambleState.slots.push(wordIdx);
+      const w = unscrambleState.words[wordIdx];
+      if (w && w.audio) {
+        AudioEngine.playUrlOrTTS(w.audio, w.text);
+      }
+      updateUnscrambleUI();
+    }
+
+    function removeWordFromTarget(slotIdx) {
+      if (currentQuizAnswered) return;
+      unscrambleState.slots.splice(slotIdx, 1);
+      updateUnscrambleUI();
+    }
+
+    function popLastUnscrambleWord() {
+      if (currentQuizAnswered || unscrambleState.slots.length === 0) return;
+      unscrambleState.slots.pop();
+      updateUnscrambleUI();
+    }
+
+    function verifyUnscrambleSentence() {
+      if (currentQuizAnswered) {
+        advanceStep();
+        return;
+      }
+
+      const targetBox = document.getElementById('unscrambleTarget');
+      const isCorrect = unscrambleState.slots.every((wordIdx, i) => wordIdx === unscrambleState.correctOrder[i]);
+
+      const btn = document.getElementById('btnContinue');
+      if (isCorrect) {
+        currentQuizAnswered = true;
+        targetBox.classList.add('correct');
+        AudioEngine.playCorrect();
+        correctCount++;
+        btn.innerText = "Tiếp Tục ➔";
+        btn.disabled = false;
+        continueActionOverride = null;
+      } else {
+        targetBox.classList.add('wrong');
+        AudioEngine.playWrong();
+        setTimeout(() => targetBox.classList.remove('wrong'), 900);
+      }
+    }
+
+    /* SPEAKING / PRONUNCIATION QUIZ */
+    function renderSpeakQuiz(viewport, q, btn) {
+      const promptImg = q.image ? `
+        <div class="quiz-prompt-image-box">
+          <img src="${q.image}" alt="Hình minh họa" loading="lazy" />
+        </div>
+      ` : '';
+
+      viewport.innerHTML = `
+        <div class="step-quiz">
+          <div class="quiz-question-title">🎤 Luyện Phát Âm / Đọc To</div>
+          ${promptImg}
+          <div class="quiz-display-box" style="padding:1.5rem 1rem;">
+            <div class="quiz-big-hz" style="font-size:2rem; line-height:1.4;">${q.prompt}</div>
+            ${q.py ? `<div class="quiz-big-py" style="font-size:1.15rem; margin-top:0.5rem;">${q.py}</div>` : ''}
+            ${q.meaning ? `<div class="quiz-prompt-meaning">${q.meaning}</div>` : ''}
+          </div>
+          <div class="speak-box">
+            <button class="speak-btn-large" onclick="AudioEngine.playUrlOrTTS('${q.audio}', '${q.prompt}')">
+              🔊 Nghe phát âm mẫu
+            </button>
+            <p style="color:var(--text-sub); font-size:0.85rem; font-weight:600;">Lắng nghe và đọc to câu trên theo người bản xứ</p>
+          </div>
+        </div>
+      `;
+      btn.disabled = false;
+      btn.innerText = "Tiếp Tục ➔";
+    }
+
+    /* DIALOGUE AUTO-PLAYBACK */
+    let dlgPlayIndex = 0;
+    function autoPlayEntireDialogue() {
+      const step = lessonSteps[stepIndex];
+      if (!step || step.type !== 'dialogue_playback') return;
+      const sents = step.data.sentences || [];
+      if (sents.length === 0) return;
+
+      const autoBtn = document.getElementById('btnAutoPlayDlg');
+      if (autoBtn) autoBtn.innerText = "⏹ Đang Phát...";
+      dlgPlayIndex = 0;
+      playNextSentenceInSequence(sents);
+    }
+
+    function playNextSentenceInSequence(sents) {
+      if (dlgPlayIndex >= sents.length) {
+        document.querySelectorAll('.dialogue-bubble-row').forEach(r => r.classList.remove('playing'));
+        const autoBtn = document.getElementById('btnAutoPlayDlg');
+        if (autoBtn) autoBtn.innerText = "↺ Phát Lại Toàn Bộ";
+        return;
+      }
+
+      document.querySelectorAll('.dialogue-bubble-row').forEach((r, idx) => {
+        r.classList.toggle('playing', idx === dlgPlayIndex);
+      });
+
+      const s = sents[dlgPlayIndex];
+      AudioEngine.playUrlOrTTS(s.audio, s.hz, () => {
+        dlgPlayIndex++;
+        setTimeout(() => playNextSentenceInSequence(sents), 400);
+      });
+    }
+
+    function playDialogueSentence(idx) {
+      const step = lessonSteps[stepIndex];
+      if (!step || step.type !== 'dialogue_playback') return;
+      const s = step.data.sentences[idx];
+      if (!s) return;
+
+      document.querySelectorAll('.dialogue-bubble-row').forEach((r, i) => {
+        r.classList.toggle('playing', i === idx);
+      });
+      AudioEngine.playUrlOrTTS(s.audio, s.hz);
+    }
+
+    function advanceStep() {
+      if (!currentQuizAnswered) return;
+      stepIndex++;
+      renderCurrentStep();
+    }
+
+    function exitLesson() {
+      if (confirm("Bạn có muốn tạm dừng để quay lại lộ trình không?")) {
+        document.getElementById('screenLesson').classList.add('hidden');
+      }
+    }
+
+    function showVictoryScreen() {
+      document.getElementById('screenLesson').classList.add('hidden');
+      document.getElementById('screenVictory').classList.remove('hidden');
+
+      document.getElementById('vicItemsCount').innerText = lessonSteps.length;
+      const acc = quizTotalCount > 0 ? Math.round((correctCount / quizTotalCount) * 100) : 100;
+      document.getElementById('vicAccuracy').innerText = `${acc}%`;
+      AudioEngine.playCorrect();
+    }
+
+    function finishVictory() {
+      if (currentModule) {
+        ProgressManager.markCompleted(currentLevel, currentUnit, currentModule);
+      }
+      document.getElementById('screenVictory').classList.add('hidden');
+      renderRoadmap();
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if ((e.code === 'Space' || e.code === 'Enter') && !document.getElementById('screenLesson').classList.contains('hidden')) {
+        const btn = document.getElementById('btnContinue');
+        if (btn && !btn.disabled) handleContinueClick();
+      }
+    });
+
+    window.onload = init;
+  </script>
+</body>
+</html>
