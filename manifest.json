@@ -1,0 +1,45 @@
+{
+  "name": "Lữ Phúc Chinese",
+  "short_name": "Lữ Phúc",
+  "description": "Học Tiếng Trung Tương Tác Cùng Lữ Phúc Chinese",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#F4F6F9",
+  "theme_color": "#8D1E16",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "favicon-32x32.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "favicon.png",
+      "sizes": "64x64",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    },
+    {
+      "src": "logo.jpg",
+      "sizes": "1024x572",
+      "type": "image/jpeg"
+    }
+  ]
+}

@@ -1,6 +1,7 @@
 data/
 *.ps1
 *.json
+!manifest.json
 *.bat
 inspect_*.js
 debug_*.js

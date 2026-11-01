@@ -5,10 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="SuperChinese">
+  <meta name="apple-mobile-web-app-title" content="Lữ Phúc Chinese">
   <meta name="mobile-web-app-capable" content="yes">
-  <meta name="theme-color" content="#FF5A36">
-  <title>SuperChinese Web - Học Tiếng Trung Tương Tác</title>
+  <meta name="application-name" content="Lữ Phúc Chinese">
+  <meta name="theme-color" content="#8D1E16">
+  <title>Lữ Phúc Chinese - Học Tiếng Trung Tương Tác</title>
+
+  <!-- PWA & Mobile Home Screen Icons -->
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="64x64" href="favicon.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <link rel="apple-touch-icon-precomposed" href="apple-touch-icon.png">
+  <link rel="manifest" href="manifest.json">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
@@ -83,7 +91,27 @@
       padding: 0.85rem 1.25rem;
       display: flex; align-items: center; justify-content: space-between;
     }
-    .header-left { display: flex; align-items: center; gap: 0.75rem; }
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      cursor: pointer;
+      user-select: none;
+    }
+    .header-brand-logo {
+      height: 40px;
+      width: auto;
+      max-width: 140px;
+      object-fit: contain;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      border: 1px solid #E6D8BC;
+      display: block;
+      transition: transform 0.15s ease;
+    }
+    .header-brand-logo:active {
+      transform: scale(0.96);
+    }
     .brand-icon {
       width: 36px; height: 36px; border-radius: 10px; background: var(--primary-gradient);
       color: white; font-weight: 900; font-size: 1.2rem;
@@ -704,9 +732,8 @@
 
   <div class="app-viewport">
     <header class="app-header">
-      <div class="header-left">
-        <div class="brand-icon">超</div>
-        <div class="brand-name">SuperChinese</div>
+      <div class="header-left" onclick="renderHome()" title="Lữ Phúc Chinese - Trang chủ">
+        <img src="logo.jpg" alt="Lữ Phúc Chinese" class="header-brand-logo" />
       </div>
       <div style="display:flex; align-items:center; gap:0.5rem;">
         <div class="streak-badge" id="streakBadge" title="Tiến độ học tập">
