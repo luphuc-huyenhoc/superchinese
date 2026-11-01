@@ -20,6 +20,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+
+  <!-- QR Code Generator & Scanner for Multi-Device Sync -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
   <style>
     :root {
       --primary: #FF5A36;
@@ -483,11 +487,141 @@
       transform: scale(1.08);
       border-color: var(--primary);
     }
-    .avatar-opt-chip.selected {
+    /* SYNC BANNER & MODAL */
+    .sync-banner-card {
+      margin-top: 0.85rem;
+      padding: 0.85rem 1rem;
+      background: linear-gradient(135deg, #FFF7ED 0%, #FFEDD5 100%);
+      border: 1.5px solid #FDBA74;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .sync-banner-card:active {
+      transform: scale(0.98);
+      background: #FED7AA;
+    }
+    .sync-banner-icon {
+      font-size: 1.5rem;
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 10px rgba(234, 88, 12, 0.15);
+      flex-shrink: 0;
+    }
+    .sync-banner-info { flex: 1; }
+    .sync-banner-title { font-weight: 800; font-size: 0.9rem; color: #9A3412; }
+    .sync-banner-desc { font-size: 0.75rem; color: #C2410C; margin-top: 0.15rem; }
+    .sync-banner-arrow { font-weight: 800; color: #EA580C; font-size: 1.1rem; }
+
+    .sync-tabs-row {
+      display: flex;
+      gap: 0.5rem;
+      background: #F1F5F9;
+      padding: 0.35rem;
+      border-radius: 14px;
+      margin-bottom: 1.25rem;
+    }
+    .sync-tab-btn {
+      flex: 1;
+      border: none;
+      background: transparent;
+      padding: 0.65rem 0.5rem;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-sub);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .sync-tab-btn.active {
+      background: white;
+      color: var(--text);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    .sync-box {
+      background: #F8FAFC;
+      border: 1.5px dashed #CBD5E1;
+      border-radius: 16px;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .qrcode-wrapper {
+      padding: 12px;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+      display: inline-block;
+      margin: 0.5rem auto;
+    }
+    .qrcode-wrapper img, .qrcode-wrapper canvas {
+      display: block;
+      margin: 0 auto;
+      max-width: 100%;
+      height: auto;
+    }
+
+    .btn-sync-action {
+      width: 100%;
+      border: none;
+      padding: 0.85rem 1rem;
+      border-radius: 14px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      transition: all 0.15s ease;
+    }
+    .btn-sync-primary {
+      background: var(--primary-gradient);
+      color: white;
+      box-shadow: 0 4px 14px rgba(255, 90, 54, 0.3);
+    }
+    .btn-sync-primary:active { transform: scale(0.98); }
+    .btn-sync-secondary {
+      background: #F1F5F9;
+      color: var(--text);
+      border: 1px solid #E2E8F0;
+    }
+    .btn-sync-secondary:active { background: #E2E8F0; }
+
+    .sync-textarea {
+      width: 100%;
+      height: 75px;
+      border: 1.5px solid #CBD5E1;
+      border-radius: 12px;
+      padding: 0.65rem 0.85rem;
+      font-family: inherit;
+      font-size: 0.8rem;
+      color: var(--text);
+      resize: none;
+      outline: none;
+    }
+    .sync-textarea:focus {
       border-color: var(--primary);
-      background: var(--primary-soft);
-      transform: scale(1.08);
-      box-shadow: 0 4px 10px rgba(255, 90, 54, 0.25);
+    }
+
+    .qr-scanner-box {
+      width: 100%;
+      max-width: 320px;
+      border-radius: 14px;
+      overflow: hidden;
+      margin-top: 0.75rem;
+      background: black;
     }
 
     /* TOAST NOTIFICATION */
@@ -832,6 +966,16 @@
             <span>➕</span>
             <span>Thêm Hồ Sơ Mới (Bé, Mẹ...)</span>
           </button>
+
+          <!-- SYNC BUTTON -->
+          <div class="sync-banner-card" onclick="openSyncModal()">
+            <div class="sync-banner-icon">🔄</div>
+            <div class="sync-banner-info">
+              <div class="sync-banner-title">Đồng bộ giữa ĐT & Máy tính</div>
+              <div class="sync-banner-desc">Quét mã QR hoặc gửi link qua Zalo</div>
+            </div>
+            <div class="sync-banner-arrow">➔</div>
+          </div>
         </div>
 
         <!-- VIEW 2: ADD / EDIT PROFILE -->
@@ -861,6 +1005,97 @@
           </div>
         </div>
 
+      </div>
+    </div>
+
+    <!-- SYNC MODAL -->
+    <div class="modal-overlay hidden" id="modalSyncOverlay" onclick="closeSyncModal(event)">
+      <div class="modal-sheet" id="modalSyncSheet" onclick="event.stopPropagation()">
+        <div class="modal-header">
+          <div>
+            <div class="modal-title">Đồng Bộ Thiết Bị 🔄</div>
+            <p style="font-size:0.8rem; color:var(--text-sub); margin-top:0.2rem;">Chuyển bài đã học giữa Điện thoại & Máy tính</p>
+          </div>
+          <button class="btn-close-modal" onclick="closeSyncModal()">✕</button>
+        </div>
+
+        <!-- SYNC TABS -->
+        <div class="sync-tabs-row">
+          <button class="sync-tab-btn active" id="tabBtnShare" onclick="switchSyncTab('share')">📤 Xuất / Chia sẻ</button>
+          <button class="sync-tab-btn" id="tabBtnImport" onclick="switchSyncTab('import')">📥 Quét / Nạp vào máy</button>
+        </div>
+
+        <!-- TAB 1: EXPORT / SHARE -->
+        <div id="syncViewShare" class="sync-tab-content">
+          <div class="sync-box">
+            <div style="font-size:0.88rem; font-weight:700; margin-bottom:0.5rem; text-align:center;">Cách 1: Quét mã QR bằng Camera máy kia</div>
+            <div id="qrcodeContainer" class="qrcode-wrapper"></div>
+            <div style="font-size:0.75rem; color:var(--text-sub); text-align:center; margin-top:0.4rem;">
+              Mở app trên máy khác ➔ Chọn "Quét / Nạp vào máy" ➔ Hướng camera vào mã QR này
+            </div>
+          </div>
+
+          <div style="margin-top:1rem;">
+            <div style="font-size:0.88rem; font-weight:700; margin-bottom:0.5rem;">Cách 2: Gửi link nạp nhanh (qua Zalo)</div>
+            <button class="btn-sync-action btn-sync-primary" onclick="copySyncLink()">
+              <span>🔗</span>
+              <span>Sao chép Link Đồng Bộ (Gửi Zalo)</span>
+            </button>
+            <div style="font-size:0.75rem; color:var(--text-sub); margin-top:0.35rem;">
+              👉 Gửi link này cho bạn qua Zalo ➔ Mở link trên máy tính là dữ liệu tự nạp vào ngay!
+            </div>
+          </div>
+
+          <div style="margin-top:1rem;">
+            <div style="font-size:0.88rem; font-weight:700; margin-bottom:0.5rem;">Cách 3: Sao chép mã dữ liệu</div>
+            <button class="btn-sync-action btn-sync-secondary" onclick="copySyncCode()">
+              <span>📋</span>
+              <span>Sao chép Mã Dữ Liệu</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- TAB 2: IMPORT / SCAN -->
+        <div id="syncViewImport" class="sync-tab-content hidden">
+          <div class="sync-box">
+            <div style="font-size:0.88rem; font-weight:700; margin-bottom:0.5rem; text-align:center;">Cách 1: Quét mã QR từ máy kia</div>
+            <button class="btn-sync-action btn-sync-primary" id="btnStartQrScan" onclick="startQrScanner()">
+              <span>📷</span>
+              <span>Bật Camera Quét Mã QR</span>
+            </button>
+            <div id="qrScannerRegion" class="qr-scanner-box hidden"></div>
+            <button class="btn-sync-action btn-sync-secondary hidden" id="btnStopQrScan" onclick="stopQrScanner()" style="margin-top:0.5rem;">
+              <span>⏹️</span>
+              <span>Tắt Camera</span>
+            </button>
+          </div>
+
+          <div style="margin-top:1.25rem;">
+            <div style="font-size:0.88rem; font-weight:700; margin-bottom:0.5rem;">Cách 2: Dán mã dữ liệu vào đây</div>
+            <textarea id="inputImportCode" class="sync-textarea" placeholder="Dán mã dữ liệu hoặc link đồng bộ vào đây..."></textarea>
+            <button class="btn-sync-action btn-sync-primary" onclick="importFromInput()" style="margin-top:0.5rem;">
+              <span>📥</span>
+              <span>Nạp Dữ Liệu Ngay</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- MODAL CONFIRM IMPORT FROM URL -->
+    <div class="modal-overlay hidden" id="modalConfirmImportOverlay">
+      <div class="modal-sheet" onclick="event.stopPropagation()">
+        <div class="modal-header">
+          <div class="modal-title">Đồng Bộ Tiến Độ 📥</div>
+        </div>
+        <div style="padding:1rem 0; font-size:0.92rem; line-height:1.5; color:var(--text);" id="confirmImportText">
+          Phát hiện dữ liệu bài học từ thiết bị khác! Bạn có muốn cập nhật vào máy tính không?
+        </div>
+        <div style="display:flex; gap:0.75rem; margin-top:0.5rem;">
+          <button class="btn-sync-action btn-sync-secondary" onclick="cancelUrlImport()" style="flex:1;">Để sau</button>
+          <button class="btn-sync-action btn-sync-primary" onclick="confirmUrlImport()" style="flex:1;">Cập nhật ngay</button>
+        </div>
       </div>
     </div>
 
@@ -1139,6 +1374,7 @@
       const activeP = ProfileManager.getActiveProfile();
       currentLevel = activeP.level || 'L1';
       renderRoadmap();
+      checkUrlSyncParams();
     }
 
     function switchLevel(lvl) {
@@ -1303,6 +1539,265 @@
       toastTimer = setTimeout(() => {
         toast.classList.remove('show');
       }, 2200);
+    }
+
+    /* MULTI-DEVICE SYNC ENGINE */
+    const SyncManager = {
+      exportPayload() {
+        ProfileManager.init();
+        const raw = JSON.stringify(ProfileManager.state);
+        return btoa(encodeURIComponent(raw).replace(/%([0-9A-F]{2})/g, (match, p1) => {
+          return String.fromCharCode('0x' + p1);
+        }));
+      },
+
+      importPayload(payloadStr) {
+        try {
+          if (!payloadStr || typeof payloadStr !== 'string') return false;
+          let clean = payloadStr.trim();
+          if (clean.includes('sync=')) {
+            clean = clean.split('sync=')[1].split('&')[0];
+          }
+          const raw = decodeURIComponent(Array.prototype.map.call(atob(clean), c => {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+          }).join(''));
+          const incomingState = JSON.parse(raw);
+          if (!incomingState || !incomingState.profiles || !Array.isArray(incomingState.profiles)) {
+            throw new Error('Định dạng không hợp lệ');
+          }
+
+          ProfileManager.init();
+          const local = ProfileManager.state;
+
+          incomingState.profiles.forEach(inP => {
+            const localP = local.profiles.find(p => p.id === inP.id || p.name.trim().toLowerCase() === inP.name.trim().toLowerCase());
+            if (localP) {
+              if (!localP.progress) localP.progress = {};
+              for (const lvl in inP.progress || {}) {
+                if (!localP.progress[lvl]) localP.progress[lvl] = {};
+                for (const u in inP.progress[lvl]) {
+                  if (!localP.progress[lvl][u]) localP.progress[lvl][u] = {};
+                  for (const m in inP.progress[lvl][u]) {
+                    if (inP.progress[lvl][u][m]) localP.progress[lvl][u][m] = true;
+                  }
+                }
+              }
+              if (inP.avatar) localP.avatar = inP.avatar;
+              if (inP.level) localP.level = inP.level;
+            } else {
+              local.profiles.push(inP);
+            }
+          });
+
+          ProfileManager.save();
+          return true;
+        } catch (e) {
+          console.error('Lỗi nạp dữ liệu đồng bộ:', e);
+          return false;
+        }
+      }
+    };
+
+    let qrCodeObj = null;
+    let qrScannerInstance = null;
+    let pendingSyncPayload = null;
+
+    function openSyncModal() {
+      document.getElementById('modalProfileOverlay').classList.add('hidden');
+      switchSyncTab('share');
+      document.getElementById('modalSyncOverlay').classList.remove('hidden');
+    }
+
+    function closeSyncModal(e) {
+      if (e && e.target !== document.getElementById('modalSyncOverlay') && !e.target.classList.contains('btn-close-modal')) return;
+      stopQrScanner();
+      document.getElementById('modalSyncOverlay').classList.add('hidden');
+    }
+
+    function switchSyncTab(tab) {
+      stopQrScanner();
+      const tabBtnShare = document.getElementById('tabBtnShare');
+      const tabBtnImport = document.getElementById('tabBtnImport');
+      const syncViewShare = document.getElementById('syncViewShare');
+      const syncViewImport = document.getElementById('syncViewImport');
+
+      if (tab === 'share') {
+        tabBtnShare.classList.add('active');
+        tabBtnImport.classList.remove('active');
+        syncViewShare.classList.remove('hidden');
+        syncViewImport.classList.add('hidden');
+        renderSyncQRCode();
+      } else {
+        tabBtnShare.classList.remove('active');
+        tabBtnImport.classList.add('active');
+        syncViewShare.classList.add('hidden');
+        syncViewImport.classList.remove('hidden');
+      }
+    }
+
+    function renderSyncQRCode() {
+      const container = document.getElementById('qrcodeContainer');
+      if (!container) return;
+      container.innerHTML = '';
+
+      const payload = SyncManager.exportPayload();
+      const syncUrl = window.location.origin + window.location.pathname + '?sync=' + payload;
+
+      if (window.QRCode) {
+        qrCodeObj = new QRCode(container, {
+          text: syncUrl,
+          width: 200,
+          height: 200,
+          colorDark: "#1E293B",
+          colorLight: "#FFFFFF",
+          correctLevel: QRCode.CorrectLevel.M
+        });
+      } else {
+        container.innerText = "Đang tải thư viện QR...";
+      }
+    }
+
+    function copySyncLink() {
+      const payload = SyncManager.exportPayload();
+      const syncUrl = window.location.origin + window.location.pathname + '?sync=' + payload;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(syncUrl).then(() => {
+          showToast("📋 Đã sao chép link đồng bộ! Hãy gửi qua Zalo.");
+        }).catch(() => {
+          prompt("Sao chép link này và mở trên máy tính / điện thoại kia:", syncUrl);
+        });
+      } else {
+        prompt("Sao chép link này và mở trên máy tính / điện thoại kia:", syncUrl);
+      }
+    }
+
+    function copySyncCode() {
+      const payload = SyncManager.exportPayload();
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(payload).then(() => {
+          showToast("📋 Đã sao chép mã dữ liệu!");
+        }).catch(() => {
+          prompt("Sao chép mã này:", payload);
+        });
+      } else {
+        prompt("Sao chép mã này:", payload);
+      }
+    }
+
+    function startQrScanner() {
+      const region = document.getElementById('qrScannerRegion');
+      const btnStart = document.getElementById('btnStartQrScan');
+      const btnStop = document.getElementById('btnStopQrScan');
+
+      if (!window.Html5Qrcode) {
+        alert("Thư viện quét mã đang tải, vui lòng thử lại sau 2 giây!");
+        return;
+      }
+
+      region.classList.remove('hidden');
+      btnStart.classList.add('hidden');
+      btnStop.classList.remove('hidden');
+
+      qrScannerInstance = new Html5Qrcode("qrScannerRegion");
+      qrScannerInstance.start(
+        { facingMode: "environment" },
+        { fps: 10, qrbox: { width: 220, height: 220 } },
+        (decodedText) => {
+          stopQrScanner();
+          const success = SyncManager.importPayload(decodedText);
+          if (success) {
+            closeSyncModal();
+            renderRoadmap();
+            showToast("🎉 Quét QR thành công! Tiến độ đã được nạp.");
+          } else {
+            alert("Mã QR không đúng định dạng dữ liệu học tập!");
+          }
+        },
+        (errorMessage) => {
+          // ignore scan frame misses
+        }
+      ).catch(err => {
+        console.error("Camera error:", err);
+        alert("Không thể bật camera hoặc chưa cấp quyền. Bạn có thể dùng cách 'Gửi link Zalo' hoặc dán mã dữ liệu bên dưới!");
+        stopQrScanner();
+      });
+    }
+
+    function stopQrScanner() {
+      if (qrScannerInstance) {
+        qrScannerInstance.stop().then(() => {
+          qrScannerInstance.clear();
+          qrScannerInstance = null;
+        }).catch(() => {
+          qrScannerInstance = null;
+        });
+      }
+      const region = document.getElementById('qrScannerRegion');
+      const btnStart = document.getElementById('btnStartQrScan');
+      const btnStop = document.getElementById('btnStopQrScan');
+      if (region) region.classList.add('hidden');
+      if (btnStart) btnStart.classList.remove('hidden');
+      if (btnStop) btnStop.classList.add('hidden');
+    }
+
+    function importFromInput() {
+      const input = document.getElementById('inputImportCode');
+      const val = input ? input.value.trim() : '';
+      if (!val) {
+        alert("Vui lòng dán mã dữ liệu hoặc đường link vào ô trống!");
+        return;
+      }
+      const success = SyncManager.importPayload(val);
+      if (success) {
+        closeSyncModal();
+        renderRoadmap();
+        showToast("🎉 Nạp dữ liệu thành công!");
+        if (input) input.value = '';
+      } else {
+        alert("Mã dữ liệu không hợp lệ. Vui lòng kiểm tra lại!");
+      }
+    }
+
+    function checkUrlSyncParams() {
+      const params = new URLSearchParams(window.location.search);
+      const syncPayload = params.get('sync');
+      if (syncPayload) {
+        pendingSyncPayload = syncPayload;
+        try {
+          // Peek profile names
+          let clean = syncPayload.trim();
+          const raw = decodeURIComponent(Array.prototype.map.call(atob(clean), c => {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+          }).join(''));
+          const state = JSON.parse(raw);
+          const names = state.profiles.map(p => `${p.avatar} ${p.name}`).join(', ');
+          const textEl = document.getElementById('confirmImportText');
+          if (textEl) {
+            textEl.innerHTML = `Phát hiện dữ liệu bài học từ thiết bị khác của: <strong>${names}</strong>.<br><br>Bạn có muốn gộp tiến độ này vào máy hiện tại không?`;
+          }
+        } catch(e) {}
+        document.getElementById('modalConfirmImportOverlay').classList.remove('hidden');
+      }
+    }
+
+    function confirmUrlImport() {
+      if (pendingSyncPayload) {
+        const success = SyncManager.importPayload(pendingSyncPayload);
+        if (success) {
+          showToast("🎉 Đã đồng bộ tiến độ thành công!");
+          renderRoadmap();
+        } else {
+          alert("Dữ liệu đồng bộ trong đường link không hợp lệ!");
+        }
+      }
+      cancelUrlImport();
+    }
+
+    function cancelUrlImport() {
+      pendingSyncPayload = null;
+      document.getElementById('modalConfirmImportOverlay').classList.add('hidden');
+      const cleanUrl = window.location.origin + window.location.pathname;
+      window.history.replaceState({}, document.title, cleanUrl);
     }
 
     function renderRoadmap() {
