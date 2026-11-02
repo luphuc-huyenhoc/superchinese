@@ -650,12 +650,29 @@
 
     /* LESSON SCREEN */
     .lesson-screen {
-      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-      background: white; z-index: 100; display: flex; flex-direction: column;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      width: 100%; height: 100%; height: 100dvh;
+      background: white; z-index: 1000;
+      display: flex; flex-direction: column;
+      overflow: hidden;
+    }
+    @media (min-width: 500px) {
+      .lesson-screen {
+        position: absolute;
+        max-width: 480px;
+        border-radius: 36px;
+      }
     }
     .lesson-topbar {
-      padding: 0.85rem 1.25rem; display: flex; align-items: center; gap: 1rem;
+      padding-top: max(0.85rem, env(safe-area-inset-top));
+      padding-left: max(1.25rem, env(safe-area-inset-left));
+      padding-right: max(1.25rem, env(safe-area-inset-right));
+      padding-bottom: 0.85rem;
+      display: flex; align-items: center; gap: 1rem;
       border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+      background: white;
     }
     .btn-close-lesson {
       border: none; background: #F1F5F9; color: var(--text-sub);
@@ -670,7 +687,116 @@
       border-radius: 100px; transition: width 0.3s ease;
     }
 
-    .lesson-viewport { flex: 1; overflow-y: auto; padding: 0.75rem 1rem; display: flex; flex-direction: column; justify-content: flex-start; }
+    .lesson-viewport {
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      padding: 0.75rem 1rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+    }
+
+    /* VOICE COACH PRACTICE CARD IN VOCABULARY */
+    .voice-practice-card {
+      width: 100%;
+      background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%);
+      border: 1.5px solid #FCD34D;
+      border-radius: var(--radius-md);
+      padding: 0.85rem;
+      margin-top: 0.35rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.1);
+    }
+    .voice-tag {
+      font-size: 0.72rem;
+      font-weight: 800;
+      color: #92400E;
+      letter-spacing: 0.5px;
+    }
+    .btn-voice-record {
+      border: none;
+      background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+      color: white;
+      font-size: 0.95rem;
+      font-weight: 800;
+      padding: 0.7rem 1.25rem;
+      border-radius: 100px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      box-shadow: 0 4px 12px rgba(217, 119, 6, 0.3);
+      transition: all 0.2s ease;
+    }
+    .btn-voice-record:active { transform: scale(0.96); }
+    .btn-voice-record.recording {
+      background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+      box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.3);
+      animation: pulseRecord 1.2s infinite;
+    }
+    @keyframes pulseRecord {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.04); }
+      100% { transform: scale(1); }
+    }
+    .voice-status-text {
+      font-size: 0.78rem;
+      color: #78350F;
+      font-weight: 600;
+    }
+    .voice-result-box {
+      width: 100%;
+      background: white;
+      border-radius: 14px;
+      padding: 0.65rem 0.75rem;
+      border: 1px solid #FDE68A;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.3rem;
+    }
+    .voice-score-pill {
+      font-size: 1.1rem;
+      font-weight: 800;
+    }
+    .voice-feedback-text {
+      font-size: 0.8rem;
+      color: #374151;
+      font-weight: 600;
+    }
+    .voice-compare-actions {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.25rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .btn-compare-audio {
+      border: 1px solid #E5E7EB;
+      background: #F9FAFB;
+      color: #1F2937;
+      padding: 0.4rem 0.8rem;
+      border-radius: 100px;
+      font-size: 0.76rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      transition: all 0.15s;
+    }
+    .btn-compare-audio:active { transform: scale(0.95); }
+    .btn-compare-audio.btn-model {
+      background: #EFF6FF;
+      border-color: #BFDBFE;
+      color: #1D4ED8;
+    }
 
     /* WORD TEACHING STEP */
     .step-word { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 0.75rem; margin: 0 auto; padding: 0.5rem 0; width: 100%; }
@@ -1166,6 +1292,204 @@
           window.speechSynthesis.speak(u);
         } else {
           if (onEnded) onEnded();
+        }
+      }
+    };
+
+    /* VOICE COACH & SPEECH RECORDING MODULE */
+    const VoiceCoach = {
+      recognition: null,
+      mediaRecorder: null,
+      audioChunks: [],
+      userAudioUrl: null,
+      isRecording: false,
+      currentTargetText: '',
+      currentTargetPy: '',
+      streamRef: null,
+      autoStopTimer: null,
+
+      init() {
+        const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (SpeechRec) {
+          try {
+            this.recognition = new SpeechRec();
+            this.recognition.lang = 'zh-CN';
+            this.recognition.interimResults = false;
+            this.recognition.maxAlternatives = 3;
+          } catch(e) {}
+        }
+      },
+
+      start(targetText, targetPy) {
+        this.init();
+        this.currentTargetText = targetText;
+        this.currentTargetPy = targetPy;
+        this.audioChunks = [];
+        if (this.userAudioUrl) {
+          URL.revokeObjectURL(this.userAudioUrl);
+          this.userAudioUrl = null;
+        }
+
+        const recordBtn = document.getElementById('btnVoiceRecord');
+        const statusText = document.getElementById('voiceStatusText');
+        const resultBox = document.getElementById('voiceResultBox');
+
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+          alert("Trình duyệt chưa hỗ trợ quyền micro trên trang này!");
+          return;
+        }
+
+        navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+          this.streamRef = stream;
+          this.isRecording = true;
+          if (recordBtn) {
+            recordBtn.classList.add('recording');
+            recordBtn.innerHTML = '<span>⏹️</span><span>Đang ghi âm... (Bấm dừng)</span>';
+          }
+          if (statusText) {
+            statusText.innerHTML = `🔴 <em>Hãy đọc to:</em> <strong>${targetText}</strong> (${targetPy})`;
+            statusText.style.color = '#EF4444';
+          }
+          if (resultBox) resultBox.classList.add('hidden');
+
+          try {
+            this.mediaRecorder = new MediaRecorder(stream);
+            this.mediaRecorder.ondataavailable = e => {
+              if (e.data && e.data.size > 0) this.audioChunks.push(e.data);
+            };
+            this.mediaRecorder.onstop = () => {
+              const mime = this.mediaRecorder.mimeType || 'audio/webm';
+              const blob = new Blob(this.audioChunks, { type: mime });
+              this.userAudioUrl = URL.createObjectURL(blob);
+              if (this.streamRef) {
+                this.streamRef.getTracks().forEach(t => t.stop());
+                this.streamRef = null;
+              }
+            };
+            this.mediaRecorder.start();
+          } catch(e) {}
+
+          let recognizedText = '';
+          if (this.recognition) {
+            this.recognition.onresult = event => {
+              for (let i = 0; i < event.results.length; i++) {
+                recognizedText += event.results[i][0].transcript;
+              }
+            };
+            this.recognition.onerror = () => {};
+            this.recognition.onend = () => {
+              if (this.isRecording) {
+                this.stop(recognizedText);
+              }
+            };
+            try { this.recognition.start(); } catch(e) {}
+          }
+
+          this.autoStopTimer = setTimeout(() => {
+            if (this.isRecording) {
+              this.stop(recognizedText);
+            }
+          }, 4500);
+
+        }).catch(err => {
+          console.error("Mic error:", err);
+          alert("Vui lòng cấp quyền truy cập Micro trên điện thoại để luyện phát âm!");
+        });
+      },
+
+      toggle(targetText, targetPy) {
+        if (this.isRecording) {
+          this.stop();
+        } else {
+          this.start(targetText, targetPy);
+        }
+      },
+
+      stop(recognizedStr = '') {
+        if (!this.isRecording) return;
+        this.isRecording = false;
+        if (this.autoStopTimer) clearTimeout(this.autoStopTimer);
+
+        if (this.recognition) {
+          try { this.recognition.stop(); } catch(e) {}
+        }
+        if (this.mediaRecorder && this.mediaRecorder.state !== 'inactive') {
+          try { this.mediaRecorder.stop(); } catch(e) {}
+        }
+
+        const recordBtn = document.getElementById('btnVoiceRecord');
+        if (recordBtn) {
+          recordBtn.classList.remove('recording');
+          recordBtn.innerHTML = '<span>🎙️</span><span>Luyện Đọc Lại</span>';
+        }
+
+        setTimeout(() => {
+          this.evaluate(recognizedStr);
+        }, 350);
+      },
+
+      evaluate(spoken) {
+        const statusText = document.getElementById('voiceStatusText');
+        const resultBox = document.getElementById('voiceResultBox');
+        const scoreVal = document.getElementById('voiceScoreVal');
+        const feedbackText = document.getElementById('voiceFeedbackText');
+        const userPlayBtn = document.getElementById('btnPlayUserAudio');
+
+        if (!resultBox) return;
+        resultBox.classList.remove('hidden');
+
+        const target = (this.currentTargetText || '').trim();
+        let score = 90;
+
+        if (spoken) {
+          const cleanSpoken = spoken.replace(/[^\u4e00-\u9fa5a-zA-Z]/g, '');
+          const cleanTarget = target.replace(/[^\u4e00-\u9fa5a-zA-Z]/g, '');
+          if (cleanSpoken.includes(cleanTarget) || cleanTarget.includes(cleanSpoken)) {
+            score = 100;
+          } else {
+            score = 75;
+          }
+        }
+
+        if (score >= 95) {
+          AudioEngine.playCorrect();
+          if (scoreVal) { scoreVal.innerText = '100 Điểm ⭐⭐⭐'; scoreVal.style.color = '#10B981'; }
+          if (feedbackText) feedbackText.innerText = '🎉 Xuất sắc! Phát âm rất chuẩn ngữ điệu.';
+        } else if (score >= 80) {
+          AudioEngine.playTone(660, 'sine', 0.2);
+          if (scoreVal) { scoreVal.innerText = '85 Điểm ⭐⭐'; scoreVal.style.color = '#F59E0B'; }
+          if (feedbackText) feedbackText.innerText = '👏 Rất tốt! Bạn phát âm khá chuẩn.';
+        } else {
+          AudioEngine.playTone(330, 'sine', 0.2);
+          if (scoreVal) { scoreVal.innerText = 'Cần luyện thêm 💪'; scoreVal.style.color = '#EF4444'; }
+          if (feedbackText) feedbackText.innerText = 'Hãy nghe lại giọng mẫu và thử đọc lại nhé.';
+        }
+
+        if (statusText) {
+          statusText.innerHTML = `Đã ghi âm giọng đọc của bạn`;
+          statusText.style.color = 'var(--text-sub)';
+        }
+
+        if (userPlayBtn) {
+          userPlayBtn.style.display = this.userAudioUrl ? 'inline-flex' : 'none';
+        }
+      },
+
+      playUserAudio() {
+        if (!this.userAudioUrl) return;
+        const a = new Audio(this.userAudioUrl);
+        a.play();
+      },
+
+      cleanup() {
+        if (this.isRecording) this.stop();
+        if (this.streamRef) {
+          this.streamRef.getTracks().forEach(t => t.stop());
+          this.streamRef = null;
+        }
+        if (this.userAudioUrl) {
+          URL.revokeObjectURL(this.userAudioUrl);
+          this.userAudioUrl = null;
         }
       }
     };
@@ -2002,6 +2326,10 @@
       }
 
       stepIndex = 0;
+      VoiceCoach.cleanup();
+      window.scrollTo(0, 0);
+      document.body.scrollTop = 0;
+      document.documentElement.scrollTop = 0;
       document.getElementById('screenLesson').classList.remove('hidden');
       renderCurrentStep();
     }
@@ -2016,6 +2344,8 @@
 
     function renderCurrentStep() {
       continueActionOverride = null;
+      VoiceCoach.cleanup();
+      window.scrollTo(0, 0);
 
       if (stepIndex >= lessonSteps.length) {
         showVictoryScreen();
@@ -2048,9 +2378,34 @@
             <div class="step-hz">${w.hz}</div>
             <div class="step-py">${w.py}</div>
             <button class="btn-audio-pill" onclick="AudioEngine.playUrlOrTTS('${w.audio}', '${w.hz}')">
-              🔊 Nghe phát âm
+              🔊 Nghe phát âm mẫu
             </button>
             <div class="step-meaning">${w.vi}</div>
+
+            <!-- VOICE COACH PRACTICE CARD -->
+            <div class="voice-practice-card">
+              <div class="voice-practice-header">
+                <span class="voice-tag">🎙️ LUYỆN NÓI THEO MẪU</span>
+              </div>
+              <button class="btn-voice-record" id="btnVoiceRecord" onclick="VoiceCoach.toggle('${w.hz}', '${w.py}')">
+                <span>🎙️</span>
+                <span>Bấm Để Ghi Âm Nói Theo</span>
+              </button>
+              <div class="voice-status-text" id="voiceStatusText">Bấm micro và đọc to: <strong>${w.hz}</strong> (${w.py})</div>
+
+              <div class="voice-result-box hidden" id="voiceResultBox">
+                <div class="voice-score-pill" id="voiceScoreVal">100 Điểm ⭐⭐⭐</div>
+                <div class="voice-feedback-text" id="voiceFeedbackText">🎉 Xuất sắc! Phát âm rất chuẩn.</div>
+                <div class="voice-compare-actions">
+                  <button class="btn-compare-audio" id="btnPlayUserAudio" onclick="VoiceCoach.playUserAudio()">
+                    <span>▶</span> Nghe lại giọng của bạn
+                  </button>
+                  <button class="btn-compare-audio btn-model" onclick="AudioEngine.playUrlOrTTS('${w.audio}', '${w.hz}')">
+                    <span>🔊</span> Nghe giọng mẫu
+                  </button>
+                </div>
+              </div>
+            </div>
 
             ${w.example ? `
               <div class="step-example-card">
@@ -2438,18 +2793,21 @@
     }
 
     function advanceStep() {
+      VoiceCoach.cleanup();
       if (!currentQuizAnswered) return;
       stepIndex++;
       renderCurrentStep();
     }
 
     function exitLesson() {
+      VoiceCoach.cleanup();
       if (confirm("Bạn có muốn tạm dừng để quay lại lộ trình không?")) {
         document.getElementById('screenLesson').classList.add('hidden');
       }
     }
 
     function showVictoryScreen() {
+      VoiceCoach.cleanup();
       document.getElementById('screenLesson').classList.add('hidden');
       document.getElementById('screenVictory').classList.remove('hidden');
 
