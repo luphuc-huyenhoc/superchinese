@@ -1545,9 +1545,12 @@
   <script src="lessons_data.js"></script>
 
   <script>
+    /* SOUND & AUDIO SYNTHESIZER ENGINE (HIGH VOLUME BOOSTED) */
     const AudioEngine = {
       ctx: null,
       currentAudio: null,
+      activeAudios: [],
+
       init() {
         if (!this.ctx) {
           const AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -1557,6 +1560,20 @@
           this.ctx.resume();
         }
       },
+
+      stopAllAudios() {
+        if (this.currentAudio) {
+          try { this.currentAudio.pause(); } catch(e) {}
+          this.currentAudio = null;
+        }
+        if (this.activeAudios && this.activeAudios.length > 0) {
+          this.activeAudios.forEach(a => {
+            try { a.pause(); a.currentTime = 0; } catch(e) {}
+          });
+          this.activeAudios = [];
+        }
+      },
+
       playTone(freq, type = 'sine', duration = 0.2) {
         this.init();
         if (!this.ctx) return;
@@ -1564,13 +1581,14 @@
         const gain = this.ctx.createGain();
         osc.type = type;
         osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
-        gain.gain.setValueAtTime(0.2, this.ctx.currentTime);
+        gain.gain.setValueAtTime(0.75, this.ctx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + duration);
         osc.connect(gain);
         gain.connect(this.ctx.destination);
         osc.start();
         osc.stop(this.ctx.currentTime + duration);
       },
+
       playTap() {
         this.init();
         if (!this.ctx) return;
@@ -1580,13 +1598,14 @@
         osc.type = 'sine';
         osc.frequency.setValueAtTime(540, now);
         osc.frequency.exponentialRampToValueAtTime(820, now + 0.04);
-        gain.gain.setValueAtTime(0.12, now);
+        gain.gain.setValueAtTime(0.65, now);
         gain.gain.exponentialRampToValueAtTime(0.001, now + 0.045);
         osc.connect(gain);
         gain.connect(this.ctx.destination);
         osc.start(now);
         osc.stop(now + 0.045);
       },
+
       playCheck() {
         this.init();
         if (!this.ctx) return;
@@ -1596,13 +1615,14 @@
         osc.type = 'triangle';
         osc.frequency.setValueAtTime(440, now);
         osc.frequency.exponentialRampToValueAtTime(659.25, now + 0.09);
-        gain.gain.setValueAtTime(0.25, now);
+        gain.gain.setValueAtTime(0.85, now);
         gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
         osc.connect(gain);
         gain.connect(this.ctx.destination);
         osc.start(now);
         osc.stop(now + 0.1);
       },
+
       playCorrect() {
         this.init();
         if (!this.ctx) return;
@@ -1611,7 +1631,7 @@
         const gain1 = this.ctx.createGain();
         osc1.type = 'sine';
         osc1.frequency.setValueAtTime(659.25, now); // E5
-        gain1.gain.setValueAtTime(0.25, now);
+        gain1.gain.setValueAtTime(0.85, now);
         gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
         osc1.connect(gain1);
         gain1.connect(this.ctx.destination);
@@ -1622,13 +1642,14 @@
         const gain2 = this.ctx.createGain();
         osc2.type = 'triangle';
         osc2.frequency.setValueAtTime(880, now + 0.08); // A5
-        gain2.gain.setValueAtTime(0.28, now + 0.08);
+        gain2.gain.setValueAtTime(0.9, now + 0.08);
         gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
         osc2.connect(gain2);
         gain2.connect(this.ctx.destination);
         osc2.start(now + 0.08);
         osc2.stop(now + 0.3);
       },
+
       playWrong() {
         this.init();
         if (!this.ctx) return;
@@ -1638,30 +1659,40 @@
         osc.type = 'sawtooth';
         osc.frequency.setValueAtTime(261.63, now); // C4
         osc.frequency.linearRampToValueAtTime(196, now + 0.22); // G3
-        gain.gain.setValueAtTime(0.2, now);
+        gain.gain.setValueAtTime(0.8, now);
         gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
         osc.connect(gain);
         gain.connect(this.ctx.destination);
         osc.start(now);
         osc.stop(now + 0.22);
       },
+
       playUrlOrTTS(url, text, onEnded) {
         this.init();
-        if (this.currentAudio) {
-          try { this.currentAudio.pause(); } catch(e) {}
-          this.currentAudio = null;
-        }
+        this.stopAllAudios();
+
         if (url && url.startsWith('http')) {
           const a = new Audio(url);
+          a.volume = 1.0;
           if (onEnded) a.onended = onEnded;
           a.play().catch(() => {
             this.speakTTS(text, onEnded);
           });
           this.currentAudio = a;
+          this.activeAudios.push(a);
+
+          // Acoustic dual-layer gain boost for loud and clear mobile speaker output
+          try {
+            const aBoost = new Audio(url);
+            aBoost.volume = 0.85;
+            aBoost.play().catch(() => {});
+            this.activeAudios.push(aBoost);
+          } catch(e) {}
         } else {
           this.speakTTS(text, onEnded);
         }
       },
+
       speakTTS(text, onEnded) {
         if (!text) { if (onEnded) onEnded(); return; }
         const clean = text.replace(/[\(\)\[\]\{\}\<\>\/\\\|_~]/g, '').trim();
@@ -1669,7 +1700,21 @@
           window.speechSynthesis.cancel();
           const u = new SpeechSynthesisUtterance(clean);
           u.lang = 'zh-CN';
-          u.rate = 0.82;
+          u.rate = 0.84;
+          u.volume = 1.0; // Max volume
+          u.pitch = 1.05; // Slightly elevated pitch for clearer phone projection
+
+          // Pick best Chinese voice for high-clarity pronunciation
+          try {
+            const voices = window.speechSynthesis.getVoices();
+            if (voices && voices.length > 0) {
+              const best = voices.find(v => (v.lang === 'zh-CN' || v.lang === 'cmn-Hans-CN') && 
+                (v.name.includes('Natural') || v.name.includes('Premium') || v.name.includes('Google') || v.name.includes('Siri') || v.name.includes('Tingting') || v.name.includes('Xiaoxiao')))
+                || voices.find(v => v.lang.startsWith('zh'));
+              if (best) u.voice = best;
+            }
+          } catch(e) {}
+
           if (onEnded) u.onend = onEnded;
           window.speechSynthesis.speak(u);
         } else {
@@ -2136,7 +2181,21 @@
 
       playUserAudio() {
         if (!this.userAudioUrl) return;
+        AudioEngine.init();
+        if (AudioEngine.ctx) {
+          try {
+            const a = new Audio(this.userAudioUrl);
+            const source = AudioEngine.ctx.createMediaElementSource(a);
+            const gain = AudioEngine.ctx.createGain();
+            gain.gain.value = 2.5; // Boost user recorded voice by +8dB
+            source.connect(gain);
+            gain.connect(AudioEngine.ctx.destination);
+            a.play();
+            return;
+          } catch(e) {}
+        }
         const a = new Audio(this.userAudioUrl);
+        a.volume = 1.0;
         a.play();
       },
 
@@ -3219,6 +3278,9 @@
 
         if (!dlg.video) {
           setTimeout(autoPlayEntireDialogue, 400);
+        } else {
+          const v = document.getElementById('dlgVideo');
+          if (v) v.volume = 1.0;
         }
 
       } else if (step.type === 'quiz') {
