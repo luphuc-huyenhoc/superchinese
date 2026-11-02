@@ -1100,6 +1100,140 @@
       opacity: 0.2; pointer-events: none; border-style: dashed;
     }
 
+    /* INLINE BLANK SLOTS FOR FILL-IN-THE-BLANKS */
+    .fill-blank-sentence {
+      line-height: 2.2 !important;
+      font-size: 1.35rem !important;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 0.35rem 0.2rem;
+    }
+    .blank-slot {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 58px;
+      height: 38px;
+      margin: 0 4px;
+      padding: 0 0.5rem;
+      vertical-align: middle;
+      border-radius: 12px;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      font-family: 'Noto Sans SC', sans-serif;
+      font-weight: 800;
+      font-size: 1.2rem;
+      cursor: pointer;
+      user-select: none;
+      box-sizing: border-box;
+    }
+    .blank-slot.empty {
+      background: #F1F5F9;
+      border: 2px dashed #94A3B8;
+      color: #94A3B8;
+      font-size: 0.95rem;
+    }
+    .blank-slot.empty:hover {
+      border-color: var(--primary);
+      background: #FFF7ED;
+    }
+    .blank-slot.filled {
+      background: #EFF6FF;
+      border: 2px solid #3B82F6;
+      color: #1D4ED8;
+      box-shadow: 0 2px 8px rgba(59, 130, 246, 0.25);
+      animation: popSlotIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes popSlotIn {
+      0% { transform: scale(0.8); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .blank-slot.filled:active {
+      transform: scale(0.95);
+    }
+
+    /* BOTTOM FEEDBACK BANNER */
+    .quiz-feedback-banner {
+      width: 100%;
+      border-radius: var(--radius-md);
+      padding: 0.85rem 1rem;
+      margin-top: 0.85rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      animation: slideUpBanner 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      box-sizing: border-box;
+    }
+    @keyframes slideUpBanner {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .quiz-feedback-banner.correct {
+      background: #F0FDF4;
+      border: 1.5px solid #86EFAC;
+      color: #166534;
+    }
+    .quiz-feedback-banner.wrong {
+      background: #FEF2F2;
+      border: 1.5px solid #FCA5A5;
+      color: #991B1B;
+    }
+    .feedback-banner-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+    }
+    .fb-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 1.05rem;
+      font-weight: 800;
+    }
+    .btn-fb-audio {
+      border: none;
+      background: white;
+      color: #1E293B;
+      padding: 0.4rem 0.85rem;
+      border-radius: 100px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+      transition: all 0.15s;
+    }
+    .btn-fb-audio:active { transform: scale(0.95); }
+    .fb-correct-answer {
+      font-size: 0.9rem;
+      line-height: 1.4;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+      font-weight: 600;
+    }
+    .fb-correct-answer .fb-lbl {
+      color: #DC2626;
+      font-weight: 800;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .fb-correct-answer .fb-text {
+      color: #0F172A;
+      font-family: 'Noto Sans SC', sans-serif;
+      font-weight: 800;
+      font-size: 1.15rem;
+      background: white;
+      padding: 0.4rem 0.75rem;
+      border-radius: 10px;
+      border: 1.5px solid #FECACA;
+    }
+
     /* SPEAKING / PRONUNCIATION */
     .speak-box {
       display: flex; flex-direction: column; align-items: center; gap: 0.85rem; text-align: center; margin-top: 0.75rem;
@@ -1147,7 +1281,7 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      margin: auto 0;
+      margin: 0 auto;
     }
     .victory-badge { font-size: 4rem; margin-bottom: 0.75rem; animation: bounce 1s infinite alternate; }
     @keyframes bounce { 0% { transform: translateY(0); } 100% { transform: translateY(-8px); } }
@@ -2875,6 +3009,8 @@
     function renderCurrentStep() {
       continueActionOverride = null;
       VoiceCoach.cleanup();
+      const oldFb = document.getElementById('quizFeedbackBanner');
+      if (oldFb) oldFb.remove();
       window.scrollTo(0, 0);
 
       if (stepIndex >= lessonSteps.length) {
@@ -3158,6 +3294,67 @@
       }
     }
 
+    function getCorrectSentence(q) {
+      if (!q) return '';
+      if (q.prompt && q.prompt.includes('__') && q.correctOrder && q.words) {
+        let orderIdx = 0;
+        return q.prompt.replace(/__/g, () => {
+          const wIdx = q.correctOrder[orderIdx++];
+          const w = q.words[wIdx];
+          return w ? w.text : '';
+        }).replace(/\s+/g, ' ').trim();
+      } else if (q.words && q.correctOrder) {
+        return q.correctOrder.map(idx => (q.words[idx] ? q.words[idx].text : '')).join(' ').trim();
+      }
+      return q.prompt || '';
+    }
+
+    function showQuizFeedbackBanner(isCorrect, q, correctDisplay) {
+      let fb = document.getElementById('quizFeedbackBanner');
+      if (!fb) {
+        fb = document.createElement('div');
+        fb.id = 'quizFeedbackBanner';
+        const viewport = document.getElementById('lessonViewport');
+        if (viewport) viewport.appendChild(fb);
+      }
+      fb.className = `quiz-feedback-banner ${isCorrect ? 'correct' : 'wrong'}`;
+
+      const soundText = isCorrect ? (getCorrectSentence(q) || correctDisplay || '') : (correctDisplay || getCorrectSentence(q) || '');
+      const cleanSoundText = soundText.replace(/__/g, '').trim();
+
+      fb.innerHTML = `
+        <div class="feedback-banner-header">
+          <div class="fb-title-wrap">
+            <span class="fb-icon">${isCorrect ? '🎉' : '❌'}</span>
+            <span class="fb-title">${isCorrect ? 'Chính xác!' : 'Chưa chính xác'}</span>
+          </div>
+          ${cleanSoundText ? `
+            <button class="btn-fb-audio" onclick="AudioEngine.speakTTS('${cleanSoundText.replace(/'/g, "\\'")}')">
+              🔊 Nghe câu đúng
+            </button>
+          ` : ''}
+        </div>
+        ${!isCorrect && correctDisplay ? `
+          <div class="fb-correct-answer">
+            <span class="fb-lbl">Đáp án đúng:</span>
+            <span class="fb-text">${correctDisplay}</span>
+          </div>
+        ` : ''}
+      `;
+
+      const audioBtn = fb.querySelector('.btn-fb-audio');
+      if (audioBtn) {
+        audioBtn.onclick = () => AudioEngine.speakTTS(cleanSoundText);
+      }
+
+      const viewport = document.getElementById('lessonViewport');
+      if (viewport) {
+        setTimeout(() => {
+          viewport.scrollTop = viewport.scrollHeight;
+        }, 80);
+      }
+    }
+
     function verifyChoiceQuiz(q) {
       if (currentQuizAnswered) {
         advanceStep();
@@ -3174,15 +3371,18 @@
 
       const chosenBtn = allBtns[selectedQuizOption];
       const correctIdx = q.answer;
+      const correctOptText = q.options ? q.options[correctIdx] : '';
 
       if (selectedQuizOption === correctIdx) {
         if (chosenBtn) chosenBtn.classList.add('correct');
         AudioEngine.playCorrect();
         correctCount++;
+        showQuizFeedbackBanner(true, q, isImageUrl(correctOptText) ? 'Hình ảnh đúng' : correctOptText);
       } else {
         if (chosenBtn) chosenBtn.classList.add('wrong');
         if (allBtns[correctIdx]) allBtns[correctIdx].classList.add('correct');
         AudioEngine.playWrong();
+        showQuizFeedbackBanner(false, q, isImageUrl(correctOptText) ? 'Hình ảnh đúng' : correctOptText);
       }
 
       const nextBtn = document.getElementById('btnContinue');
@@ -3193,18 +3393,27 @@
       continueActionOverride = null;
     }
 
-    /* UNSCRAMBLE SENTENCE QUIZ */
+    /* FILL-IN-THE-BLANKS & SENTENCE UNSCRAMBLE QUIZ */
     let unscrambleState = {
+      isFillBlank: false,
       slots: [],
       words: [],
-      correctOrder: []
+      correctOrder: [],
+      prompt: '',
+      q: null
     };
 
     function renderUnscrambleQuiz(viewport, q, btn) {
+      const isFillBlank = q.prompt && q.prompt.includes('__');
+      const blankCount = isFillBlank ? (q.prompt.match(/__/g) || []).length : q.words.length;
+
       unscrambleState = {
-        slots: [],
-        words: q.words,
-        correctOrder: q.correctOrder || q.words.map((_, i) => i)
+        isFillBlank,
+        slots: isFillBlank ? new Array(blankCount).fill(null) : [],
+        words: q.words || [],
+        correctOrder: q.correctOrder || (q.words ? q.words.map((_, i) => i) : []),
+        prompt: q.prompt || '',
+        q: q
       };
 
       const promptImg = q.image ? `
@@ -3215,20 +3424,22 @@
 
       viewport.innerHTML = `
         <div class="step-quiz">
-          <div class="quiz-question-title">${q.title || 'Sắp xếp từ thành câu:'}</div>
+          <div class="quiz-question-title">${q.title || (isFillBlank ? 'Chọn từ điền vào chỗ trống:' : 'Sắp xếp từ thành câu:')}</div>
           ${promptImg}
-          <div class="quiz-display-box tap-to-speak" onclick="AudioEngine.playUrlOrTTS('${q.audio || ''}', '${q.prompt || ''}')" style="padding:1rem;" title="Chạm chữ để nghe">
-            <div class="quiz-big-hz" style="font-size:1.35rem; color:var(--text);">${q.prompt || 'Ghép các từ theo thứ tự chính xác'}</div>
-            ${q.py ? `<div class="quiz-big-py" style="font-size:1rem;">${q.py}</div>` : ''}
+          <div class="quiz-display-box" id="unscramblePromptCard" style="padding:1.15rem 1rem;">
+            ${renderUnscramblePromptHtml()}
+            ${q.py ? `<div class="quiz-big-py" style="font-size:1rem; margin-top:0.35rem;">${q.py}</div>` : ''}
             ${q.meaning ? `<div class="quiz-prompt-meaning">${q.meaning}</div>` : ''}
-            <span class="tap-sound-hint">🔊 Chạm chữ để nghe</span>
+            <span class="tap-sound-hint" onclick="AudioEngine.speakTTS('${getCorrectSentence(q).replace(/'/g, "\\'")}')">🔊 Chạm chữ để nghe</span>
             ${q.audio ? `<button class="quiz-audio-corner" onclick="event.stopPropagation(); AudioEngine.playUrlOrTTS('${q.audio}', '')">🔊</button>` : ''}
           </div>
 
           <div class="unscramble-area">
-            <div class="unscramble-target-box" id="unscrambleTarget" onclick="popLastUnscrambleWord()">
-              <span id="targetPlaceholder" style="color:var(--text-muted); font-size:0.9rem; font-weight:600;">Chạm vào các từ bên dưới để ghép câu</span>
-            </div>
+            ${!isFillBlank ? `
+              <div class="unscramble-target-box" id="unscrambleTarget" onclick="popLastUnscrambleWord()">
+                <span id="targetPlaceholder" style="color:var(--text-muted); font-size:0.9rem; font-weight:600;">Chạm vào các từ bên dưới để ghép câu</span>
+              </div>
+            ` : ''}
             <div class="unscramble-bank-box" id="unscrambleBank"></div>
           </div>
         </div>
@@ -3237,61 +3448,122 @@
       updateUnscrambleUI();
     }
 
-    function updateUnscrambleUI() {
-      const targetBox = document.getElementById('unscrambleTarget');
-      const bankBox = document.getElementById('unscrambleBank');
-      if (!targetBox || !bankBox) return;
+    function renderUnscramblePromptHtml() {
+      if (!unscrambleState.isFillBlank) {
+        return `<div class="quiz-big-hz tap-to-speak" onclick="AudioEngine.playUrlOrTTS('${unscrambleState.q.audio || ''}', '${unscrambleState.prompt}')" style="font-size:1.35rem; color:var(--text);">${unscrambleState.prompt || 'Ghép các từ theo thứ tự chính xác'}</div>`;
+      }
 
-      if (unscrambleState.slots.length === 0) {
-        targetBox.innerHTML = '<span id="targetPlaceholder" style="color:var(--text-muted); font-size:0.9rem; font-weight:600;">Chạm vào các từ bên dưới để ghép câu</span>';
+      const parts = unscrambleState.prompt.split('__');
+      let html = '<div class="quiz-big-hz fill-blank-sentence">';
+      for (let i = 0; i < parts.length; i++) {
+        html += `<span>${parts[i]}</span>`;
+        if (i < parts.length - 1) {
+          const filledWordIdx = unscrambleState.slots[i];
+          if (filledWordIdx !== null && filledWordIdx !== undefined) {
+            const w = unscrambleState.words[filledWordIdx];
+            html += `<button type="button" class="blank-slot filled" onclick="removeBlankWord(${i})" title="Chạm để bỏ từ">${w.text}</button>`;
+          } else {
+            html += `<button type="button" class="blank-slot empty" title="Chỗ trống ${i + 1}">__</button>`;
+          }
+        }
+      }
+      html += '</div>';
+      return html;
+    }
+
+    function updateUnscrambleUI() {
+      if (unscrambleState.isFillBlank) {
+        const cardPrompt = document.getElementById('unscramblePromptCard');
+        if (cardPrompt) {
+          const sentenceContainer = cardPrompt.querySelector('.fill-blank-sentence');
+          if (sentenceContainer) {
+            sentenceContainer.outerHTML = renderUnscramblePromptHtml();
+          }
+        }
       } else {
-        targetBox.innerHTML = '';
-        unscrambleState.slots.forEach((wordIdx, slotIdx) => {
-          const w = unscrambleState.words[wordIdx];
+        const targetBox = document.getElementById('unscrambleTarget');
+        if (targetBox) {
+          if (unscrambleState.slots.length === 0) {
+            targetBox.innerHTML = '<span id="targetPlaceholder" style="color:var(--text-muted); font-size:0.9rem; font-weight:600;">Chạm vào các từ bên dưới để ghép câu</span>';
+          } else {
+            targetBox.innerHTML = '';
+            unscrambleState.slots.forEach((wordIdx, slotIdx) => {
+              const w = unscrambleState.words[wordIdx];
+              const chip = document.createElement('button');
+              chip.className = 'unscramble-chip in-target tap-to-speak';
+              chip.innerText = w.text;
+              chip.onclick = (e) => {
+                e.stopPropagation();
+                removeWordFromTarget(slotIdx);
+              };
+              targetBox.appendChild(chip);
+            });
+          }
+        }
+      }
+
+      const bankBox = document.getElementById('unscrambleBank');
+      if (bankBox) {
+        bankBox.innerHTML = '';
+        unscrambleState.words.forEach((w, wordIdx) => {
+          let isUsed = false;
+          if (unscrambleState.isFillBlank) {
+            isUsed = unscrambleState.slots.includes(wordIdx);
+          } else {
+            isUsed = unscrambleState.slots.includes(wordIdx);
+          }
           const chip = document.createElement('button');
-          chip.className = 'unscramble-chip in-target tap-to-speak';
+          chip.className = `unscramble-chip ${isUsed ? 'used' : 'tap-to-speak'}`;
           chip.innerText = w.text;
-          chip.onclick = (e) => {
-            e.stopPropagation();
-            removeWordFromTarget(slotIdx);
+          chip.onclick = () => {
+            if (!isUsed) addWordToTarget(wordIdx);
           };
-          targetBox.appendChild(chip);
+          bankBox.appendChild(chip);
         });
       }
 
-      bankBox.innerHTML = '';
-      unscrambleState.words.forEach((w, wordIdx) => {
-        const isUsed = unscrambleState.slots.includes(wordIdx);
-        const chip = document.createElement('button');
-        chip.className = `unscramble-chip ${isUsed ? 'used' : 'tap-to-speak'}`;
-        chip.innerText = w.text;
-        chip.onclick = () => {
-          if (!isUsed) addWordToTarget(wordIdx);
-        };
-        bankBox.appendChild(chip);
-      });
-
       const btn = document.getElementById('btnContinue');
-      if (unscrambleState.slots.length === unscrambleState.words.length) {
-        btn.disabled = false;
-        btn.innerText = "Kiểm Tra";
-        continueActionOverride = verifyUnscrambleSentence;
+      let isReady = false;
+      if (unscrambleState.isFillBlank) {
+        isReady = unscrambleState.slots.every(s => s !== null && s !== undefined);
       } else {
-        btn.disabled = true;
+        isReady = unscrambleState.slots.length === unscrambleState.words.length;
+      }
+
+      if (btn) {
+        btn.disabled = !isReady;
         btn.innerText = "Kiểm Tra";
-        continueActionOverride = null;
+        continueActionOverride = isReady ? verifyUnscrambleSentence : null;
       }
     }
 
     function addWordToTarget(wordIdx) {
       if (currentQuizAnswered) return;
-      unscrambleState.slots.push(wordIdx);
-      const w = unscrambleState.words[wordIdx];
       AudioEngine.playTap();
-      if (w) {
-        AudioEngine.playUrlOrTTS(w.audio || '', w.text || '');
+      const w = unscrambleState.words[wordIdx];
+      if (w) AudioEngine.playUrlOrTTS(w.audio || '', w.text || '');
+
+      if (unscrambleState.isFillBlank) {
+        const emptyIdx = unscrambleState.slots.findIndex(s => s === null || s === undefined);
+        if (emptyIdx !== -1) {
+          unscrambleState.slots[emptyIdx] = wordIdx;
+        }
+      } else {
+        unscrambleState.slots.push(wordIdx);
       }
       updateUnscrambleUI();
+    }
+
+    function removeBlankWord(slotIdx) {
+      if (currentQuizAnswered) return;
+      const wordIdx = unscrambleState.slots[slotIdx];
+      if (wordIdx !== null && wordIdx !== undefined) {
+        AudioEngine.playTap();
+        const w = unscrambleState.words[wordIdx];
+        if (w) AudioEngine.playUrlOrTTS(w.audio || '', w.text || '');
+        unscrambleState.slots[slotIdx] = null;
+        updateUnscrambleUI();
+      }
     }
 
     function removeWordFromTarget(slotIdx) {
@@ -3299,9 +3571,7 @@
       const wordIdx = unscrambleState.slots[slotIdx];
       const w = unscrambleState.words[wordIdx];
       AudioEngine.playTap();
-      if (w) {
-        AudioEngine.playUrlOrTTS(w.audio || '', w.text || '');
-      }
+      if (w) AudioEngine.playUrlOrTTS(w.audio || '', w.text || '');
       unscrambleState.slots.splice(slotIdx, 1);
       updateUnscrambleUI();
     }
@@ -3311,9 +3581,7 @@
       const wordIdx = unscrambleState.slots[unscrambleState.slots.length - 1];
       const w = unscrambleState.words[wordIdx];
       AudioEngine.playTap();
-      if (w) {
-        AudioEngine.playUrlOrTTS(w.audio || '', w.text || '');
-      }
+      if (w) AudioEngine.playUrlOrTTS(w.audio || '', w.text || '');
       unscrambleState.slots.pop();
       updateUnscrambleUI();
     }
@@ -3326,23 +3594,27 @@
 
       AudioEngine.playCheck();
 
-      const targetBox = document.getElementById('unscrambleTarget');
+      const q = unscrambleState.q;
       const isCorrect = unscrambleState.slots.every((wordIdx, i) => wordIdx === unscrambleState.correctOrder[i]);
+      currentQuizAnswered = true;
 
-      const btn = document.getElementById('btnContinue');
+      const correctSentence = getCorrectSentence(q);
+
       if (isCorrect) {
-        currentQuizAnswered = true;
-        targetBox.classList.add('correct');
         AudioEngine.playCorrect();
         correctCount++;
+        showQuizFeedbackBanner(true, q, correctSentence);
+      } else {
+        AudioEngine.playWrong();
+        showQuizFeedbackBanner(false, q, correctSentence);
+      }
+
+      const btn = document.getElementById('btnContinue');
+      if (btn) {
         btn.innerText = "Tiếp Tục ➔";
         btn.disabled = false;
-        continueActionOverride = null;
-      } else {
-        targetBox.classList.add('wrong');
-        AudioEngine.playWrong();
-        setTimeout(() => targetBox.classList.remove('wrong'), 900);
       }
+      continueActionOverride = null;
     }
 
     /* SPEAKING / PRONUNCIATION QUIZ */
