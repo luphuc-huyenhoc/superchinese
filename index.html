@@ -1764,6 +1764,11 @@
           this.userAudioUrl = null;
         }
 
+        if (this.streamRef) {
+          try { this.streamRef.getTracks().forEach(t => t.stop()); } catch(e) {}
+          this.streamRef = null;
+        }
+
         const micBtn = document.getElementById('btnVoiceRecord');
         const statusLabel = document.getElementById('voiceStatusText');
         const waveBox = document.getElementById('voiceWaveBox');
@@ -1829,21 +1834,30 @@
 
           // MediaRecorder for Playback
           try {
-            this.mediaRecorder = new MediaRecorder(stream);
-            this.mediaRecorder.ondataavailable = e => {
-              if (e.data && e.data.size > 0) this.audioChunks.push(e.data);
-            };
-            this.mediaRecorder.onstop = () => {
-              const mime = (this.mediaRecorder && this.mediaRecorder.mimeType) || 'audio/webm';
-              const blob = new Blob(this.audioChunks, { type: mime });
-              this.userAudioUrl = URL.createObjectURL(blob);
-              if (this.streamRef) {
-                this.streamRef.getTracks().forEach(t => t.stop());
-                this.streamRef = null;
+            let options = undefined;
+            if (typeof MediaRecorder !== 'undefined') {
+              if (MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported('audio/webm')) {
+                options = { mimeType: 'audio/webm' };
+              } else if (MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported('audio/mp4')) {
+                options = { mimeType: 'audio/mp4' };
               }
-            };
-            this.mediaRecorder.start(100);
-          } catch(e) {}
+              this.mediaRecorder = options ? new MediaRecorder(stream, options) : new MediaRecorder(stream);
+              this.mediaRecorder.ondataavailable = e => {
+                if (e.data && e.data.size > 0) this.audioChunks.push(e.data);
+              };
+              this.mediaRecorder.onstop = () => {
+                try {
+                  const mime = (this.mediaRecorder && this.mediaRecorder.mimeType) || (options && options.mimeType) || 'audio/mp4';
+                  const blob = new Blob(this.audioChunks, { type: mime });
+                  this.userAudioUrl = URL.createObjectURL(blob);
+                } catch(e) {}
+              };
+              this.mediaRecorder.start(100);
+            }
+          } catch(e) {
+            console.warn("MediaRecorder init failed:", e);
+            this.mediaRecorder = null;
+          }
 
           // Clean & create fresh SpeechRecognition instance on every session
           if (this.recognition) {
@@ -1945,6 +1959,11 @@
           this.audioCtx = null;
         }
 
+        if (this.streamRef) {
+          try { this.streamRef.getTracks().forEach(t => t.stop()); } catch(e) {}
+          this.streamRef = null;
+        }
+
         const micBtn = document.getElementById('btnVoiceRecord');
         const statusLabel = document.getElementById('voiceStatusText');
         const waveBox = document.getElementById('voiceWaveBox');
@@ -1992,6 +2011,14 @@
         if (expectedEl) expectedEl.innerText = `${targetHz} (${targetPy})`;
         if (statusLabel) statusLabel.innerText = "Chạm vào Micro để luyện đọc lại";
         if (btnPlayUser) btnPlayUser.style.display = this.userAudioUrl ? 'inline-flex' : 'none';
+
+        const micBtn = document.getElementById('btnVoiceRecord');
+        if (micBtn) {
+          micBtn.classList.remove('recording');
+          micBtn.innerHTML = '<span class="mic-icon">🎙️</span><span class="mic-ripple"></span>';
+          micBtn.title = 'Chạm vào Micro để luyện đọc lại';
+          micBtn.onclick = () => this.toggle(targetHz, targetPy);
+        }
 
         // 1. EVALUATION VIA CAPTURED TRANSCRIPTS (Primary AI Speech Engine)
         if (this.capturedTranscripts.length > 0) {
@@ -3618,7 +3645,39 @@
     }
 
     /* SPEAKING / PRONUNCIATION QUIZ */
+    function resolveSpeakQuizPrompt(q) {
+      if (!q) return;
+      if (!q.prompt || !q.prompt.trim()) {
+        const uData = window.LESSONS_DATA && window.LESSONS_DATA[currentLevel] && window.LESSONS_DATA[currentLevel][currentUnit];
+        if (uData) {
+          if (uData.text && uData.text.sentences && uData.text.sentences.length > 0) {
+            const s = uData.text.sentences[uData.text.sentences.length > 1 ? 1 : 0];
+            q.prompt = s.hz;
+            q.py = s.py || '';
+            q.meaning = s.vi || '';
+            q.audio = s.audio || '';
+            q.title = 'Đọc câu đối thoại (' + (s.role || 'Nhân vật') + ')';
+          } else if (uData.words && uData.words.list && uData.words.list.length > 0) {
+            const w = uData.words.list.find(x => x.example) || uData.words.list[0];
+            if (w.example) {
+              q.prompt = w.example.hz;
+              q.py = w.example.py || '';
+              q.meaning = w.example.vi || '';
+              q.audio = w.example.audio || '';
+            } else {
+              q.prompt = w.hz;
+              q.py = w.py || '';
+              q.meaning = w.vi || '';
+              q.audio = w.audio || '';
+            }
+          }
+        }
+      }
+    }
+
     function renderSpeakQuiz(viewport, q, btn) {
+      resolveSpeakQuizPrompt(q);
+
       const promptImg = q.image ? `
         <div class="quiz-prompt-image-box">
           <img src="${q.image}" alt="Hình minh họa" loading="lazy" />
@@ -3629,7 +3688,7 @@
         <div class="step-quiz">
           <div class="quiz-question-title">🎤 Luyện Phát Âm / Đọc To</div>
           ${promptImg}
-          <div class="quiz-display-box tap-to-speak" onclick="AudioEngine.playUrlOrTTS('${q.audio || ''}', '${q.prompt}')" style="padding:1.15rem 1rem;" title="Chạm chữ để nghe">
+          <div class="quiz-display-box tap-to-speak" id="speakPromptBox" style="padding:1.15rem 1rem;" title="Chạm chữ để nghe">
             <div class="quiz-big-hz" style="font-size:1.85rem; line-height:1.35;">${q.prompt}</div>
             ${q.py ? `<div class="quiz-big-py" style="font-size:1.1rem; margin-top:0.35rem;">${q.py}</div>` : ''}
             ${q.meaning ? `<div class="quiz-prompt-meaning">${q.meaning}</div>` : ''}
@@ -3637,7 +3696,7 @@
           </div>
 
           <div style="display:flex; justify-content:center; margin-top:0.4rem;">
-            <button class="btn-audio-pill" onclick="AudioEngine.playUrlOrTTS('${q.audio || ''}', '${q.prompt}')">
+            <button class="btn-audio-pill" id="btnSpeakPromptModel">
               🔊 Nghe phát âm mẫu
             </button>
           </div>
@@ -3646,7 +3705,7 @@
           <div class="voice-practice-card" style="margin-top:0.6rem;">
             <div class="voice-card-top">
               <div class="voice-tag">🎙️ BẤM MICRO ĐỂ LUYỆN ĐỌC THEO</div>
-              <div class="voice-target-hint tap-to-speak" onclick="AudioEngine.playUrlOrTTS('${q.audio || ''}', '${q.prompt}')">
+              <div class="voice-target-hint tap-to-speak" id="btnSpeakTargetHint">
                 Đọc to: <span class="voice-target-hz">${q.prompt}</span> <span class="voice-target-py">${q.py ? `(${q.py})` : ''} 🔊</span>
               </div>
             </div>
@@ -3660,7 +3719,7 @@
                 <div class="wave-bar" id="wb5"></div>
               </div>
 
-              <button class="btn-mic-circle" id="btnVoiceRecord" onclick="VoiceCoach.toggle('${q.prompt}', '${q.py || ''}')" title="Bấm để nói">
+              <button class="btn-mic-circle" id="btnVoiceRecord" title="Bấm để nói">
                 <span class="mic-icon">🎙️</span>
                 <span class="mic-ripple"></span>
               </button>
@@ -3695,7 +3754,7 @@
                 <button class="btn-voice-audio-pill" id="btnPlayUserAudio" onclick="VoiceCoach.playUserAudio()">
                   <span>▶</span> Nghe giọng của bạn
                 </button>
-                <button class="btn-voice-audio-pill btn-model" onclick="AudioEngine.playUrlOrTTS('${q.audio || ''}', '${q.prompt}')">
+                <button class="btn-voice-audio-pill btn-model" id="btnSpeakModelResult">
                   <span>🔊</span> Nghe giọng mẫu
                 </button>
               </div>
@@ -3703,6 +3762,23 @@
           </div>
         </div>
       `;
+
+      // Safe event binding without inline HTML attribute string escaping issues
+      const box = document.getElementById('speakPromptBox');
+      if (box) box.onclick = () => AudioEngine.playUrlOrTTS(q.audio || '', q.prompt);
+
+      const btnModel = document.getElementById('btnSpeakPromptModel');
+      if (btnModel) btnModel.onclick = () => AudioEngine.playUrlOrTTS(q.audio || '', q.prompt);
+
+      const hint = document.getElementById('btnSpeakTargetHint');
+      if (hint) hint.onclick = () => AudioEngine.playUrlOrTTS(q.audio || '', q.prompt);
+
+      const btnResModel = document.getElementById('btnSpeakModelResult');
+      if (btnResModel) btnResModel.onclick = () => AudioEngine.playUrlOrTTS(q.audio || '', q.prompt);
+
+      const mic = document.getElementById('btnVoiceRecord');
+      if (mic) mic.onclick = () => VoiceCoach.toggle(q.prompt, q.py || '');
+
       btn.disabled = false;
       btn.innerText = "Tiếp Tục ➔";
     }
