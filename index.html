@@ -1463,9 +1463,10 @@
       audioCtx: null,
       analyser: null,
       animTimer: null,
-      autoStopTimer: null,
+      countdownTimer: null,
+      countdownSeconds: 0,
       maxVolume: 0,
-      speechCaptured: '',
+      capturedTranscripts: [],
 
       init() {
         initPinyinDict();
@@ -1474,7 +1475,7 @@
           try {
             this.recognition = new SpeechRec();
             this.recognition.lang = 'zh-CN';
-            this.recognition.continuous = false;
+            this.recognition.continuous = true;
             this.recognition.interimResults = true;
             this.recognition.maxAlternatives = 5;
           } catch(e) {}
@@ -1495,7 +1496,7 @@
         this.currentTargetPy = targetPy;
         this.audioChunks = [];
         this.maxVolume = 0;
-        this.speechCaptured = '';
+        this.capturedTranscripts = [];
 
         if (this.userAudioUrl) {
           URL.revokeObjectURL(this.userAudioUrl);
@@ -1515,12 +1516,17 @@
         navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
           this.streamRef = stream;
           this.isRecording = true;
+          this.countdownSeconds = 4;
 
-          if (micBtn) micBtn.classList.add('recording');
+          if (micBtn) {
+            micBtn.classList.add('recording');
+            micBtn.innerHTML = '<span class="mic-icon">⏹️</span><span class="mic-ripple"></span>';
+            micBtn.title = 'Bấm để dừng ghi âm sớm';
+          }
           if (waveBox) waveBox.classList.add('active');
           if (statusLabel) {
             statusLabel.classList.add('active');
-            statusLabel.innerHTML = `🔴 Đang nghe... Hãy đọc: <strong>${targetText}</strong> (${targetPy})`;
+            statusLabel.innerHTML = `🔴 Đang nghe... Còn <strong>${this.countdownSeconds}s</strong> (Bấm nút để dừng)`;
           }
           if (resultBox) resultBox.classList.add('hidden');
 
@@ -1578,28 +1584,45 @@
           // SpeechRecognition
           if (this.recognition) {
             this.recognition.onresult = event => {
-              let res = '';
               for (let i = 0; i < event.results.length; i++) {
-                const alt = event.results[i][0];
-                if (alt && alt.transcript) res += alt.transcript;
+                for (let j = 0; j < event.results[i].length; j++) {
+                  const alt = event.results[i][j];
+                  if (alt && alt.transcript) {
+                    const text = alt.transcript.trim();
+                    if (text && !this.capturedTranscripts.includes(text)) {
+                      this.capturedTranscripts.push(text);
+                    }
+                  }
+                }
               }
-              if (res) this.speechCaptured = res;
             };
             this.recognition.onerror = () => {};
             this.recognition.onend = () => {
-              if (this.isRecording) this.stop();
+              // NEVER stop prematurely if user is still in the recording countdown!
+              if (this.isRecording && this.countdownSeconds > 0) {
+                try { this.recognition.start(); } catch(e) {}
+              }
             };
             try { this.recognition.start(); } catch(e) {}
           }
 
-          // Auto finish after 3.8 seconds if user hasn't tapped stop
-          this.autoStopTimer = setTimeout(() => {
-            if (this.isRecording) this.stop();
-          }, 3800);
+          // Countdown timer: Gives user 4 FULL SECONDS to speak!
+          this.countdownTimer = setInterval(() => {
+            this.countdownSeconds--;
+            if (this.countdownSeconds > 0) {
+              if (statusLabel) {
+                statusLabel.innerHTML = `🔴 Đang nghe... Còn <strong>${this.countdownSeconds}s</strong> (Bấm nút để dừng)`;
+              }
+            } else {
+              clearInterval(this.countdownTimer);
+              this.countdownTimer = null;
+              this.stop();
+            }
+          }, 1000);
 
         }).catch(err => {
           console.error("Mic error:", err);
-          alert("Vui lòng cấp quyền Micro trên điện thoại để luyện phát âm!");
+          alert("Vui lòng cấp quyền Micro trên trình duyệt để luyện phát âm!");
         });
       },
 
@@ -1607,7 +1630,10 @@
         if (!this.isRecording) return;
         this.isRecording = false;
 
-        if (this.autoStopTimer) clearTimeout(this.autoStopTimer);
+        if (this.countdownTimer) {
+          clearInterval(this.countdownTimer);
+          this.countdownTimer = null;
+        }
         if (this.animTimer) cancelAnimationFrame(this.animTimer);
 
         if (this.recognition) {
@@ -1625,11 +1651,15 @@
         const statusLabel = document.getElementById('voiceStatusText');
         const waveBox = document.getElementById('voiceWaveBox');
 
-        if (micBtn) micBtn.classList.remove('recording');
+        if (micBtn) {
+          micBtn.classList.remove('recording');
+          micBtn.innerHTML = '<span class="mic-icon">🎙️</span><span class="mic-ripple"></span>';
+          micBtn.title = 'Bấm để nói';
+        }
         if (waveBox) waveBox.classList.remove('active');
         if (statusLabel) {
           statusLabel.classList.remove('active');
-          statusLabel.innerText = "Đang đánh giá phát âm...";
+          statusLabel.innerText = "Đang phân tích phát âm...";
         }
 
         for (let b = 1; b <= 5; b++) {
@@ -1639,7 +1669,7 @@
 
         setTimeout(() => {
           this.evaluate();
-        }, 400);
+        }, 350);
       },
 
       evaluate() {
@@ -1659,97 +1689,100 @@
         const targetHz = (this.currentTargetText || '').trim();
         const targetPy = (this.currentTargetPy || '').trim();
         const targetCleanPy = stripTone(targetPy);
-        const spoken = (this.speechCaptured || '').trim();
 
         if (expectedEl) expectedEl.innerText = `${targetHz} (${targetPy})`;
         if (statusLabel) statusLabel.innerText = "Chạm vào Micro để luyện đọc lại";
         if (btnPlayUser) btnPlayUser.style.display = this.userAudioUrl ? 'inline-flex' : 'none';
 
-        // 1. SILENCE CHECK: Did the mic hear actual sound?
-        if (this.maxVolume < 8 && !spoken) {
+        // 1. NO SPEECH DETECTED (Silent or no recognized speech)
+        if (this.capturedTranscripts.length === 0) {
           if (scoreBadge) {
             scoreBadge.innerText = '0%';
             scoreBadge.className = 'voice-badge-score low';
           }
           if (scoreStars) scoreStars.innerText = '❌';
-          if (scoreTitle) scoreTitle.innerText = 'Chưa nghe thấy giọng';
-          if (heardEl) heardEl.innerText = '(Không có âm thanh)';
-          if (adviceEl) adviceEl.innerText = '⚠️ Máy chưa thu được giọng nói! Hãy đọc to và giữ gần micro hơn.';
+          if (scoreTitle) scoreTitle.innerText = 'Chưa nghe thấy từ';
+          if (heardEl) heardEl.innerText = '(Không bắt được âm)';
+          if (adviceEl) adviceEl.innerText = `⚠️ Chưa nhận diện được từ "${targetHz}" (${targetPy}). Hãy bấm Micro, nói to và rõ ràng hơn nhé!`;
           AudioEngine.playWrong();
           return;
         }
 
-        // 2. ACCURATE SCORING
-        let score = 0;
-        let stars = '⭐⭐⭐';
-        let title = 'Xuất Sắc!';
-        let advice = '🎉 Bạn phát âm rất chuẩn xác ngữ điệu.';
-        let heardDisplay = spoken || targetHz;
+        // 2. EVALUATE ALL RECOGNIZED CANDIDATES
+        let bestScore = 0;
+        let bestStars = '⭐';
+        let bestTitle = 'Chưa Đúng';
+        let bestHeard = this.capturedTranscripts[0];
+        let bestAdvice = `Máy nghe thấy bạn đọc là: "${bestHeard}". Hãy bấm "Nghe giọng mẫu" và thử lại nhé!`;
 
-        if (spoken) {
-          const cleanSpoken = spoken.replace(/[^\u4e00-\u9fa5a-zA-Z]/g, '');
+        for (const candidate of this.capturedTranscripts) {
+          const cleanCand = candidate.replace(/[^\u4e00-\u9fa5a-zA-Z]/g, '');
           const cleanTargetHz = targetHz.replace(/[^\u4e00-\u9fa5a-zA-Z]/g, '');
+          if (!cleanCand) continue;
 
-          let spokenPy = pinyinDict[cleanSpoken] || '';
-          let cleanSpokenPy = stripTone(spokenPy);
+          // MATCH LEVEL 1: Exact Chinese Character match
+          if (cleanCand === cleanTargetHz || cleanCand.includes(cleanTargetHz) || cleanTargetHz.includes(cleanCand)) {
+            bestScore = 100;
+            bestStars = '⭐⭐⭐';
+            bestTitle = 'Hoàn Hảo! 🎉';
+            bestHeard = candidate;
+            bestAdvice = 'Phát âm chuẩn xác như người bản xứ!';
+            break;
+          }
 
-          // MATCH LEVEL 1: Exact Chinese characters match
-          if (cleanSpoken === cleanTargetHz || cleanSpoken.includes(cleanTargetHz) || cleanTargetHz.includes(cleanSpoken)) {
-            score = 100;
-            stars = '⭐⭐⭐';
-            title = 'Hoàn Hảo!';
-            advice = '🎉 Phát âm và ngữ điệu chuẩn như người bản xứ.';
+          // MATCH LEVEL 2: Pinyin Phoneme match (Homophone check)
+          const candPy = stripTone(pinyinDict[cleanCand] || cleanCand);
+          if (candPy && (candPy === targetCleanPy || candPy.includes(targetCleanPy) || targetCleanPy.includes(candPy))) {
+            bestScore = 95;
+            bestStars = '⭐⭐⭐';
+            bestTitle = 'Rất Chuẩn! 👏';
+            bestHeard = candidate;
+            bestAdvice = 'Âm tiết và ngữ điệu rất chuẩn xác!';
+            break;
           }
-          // MATCH LEVEL 2: Pinyin phoneme match (Homophone check)
-          else if (cleanSpokenPy && (cleanSpokenPy === targetCleanPy || cleanSpokenPy.includes(targetCleanPy) || targetCleanPy.includes(cleanSpokenPy))) {
-            score = 95;
-            stars = '⭐⭐⭐';
-            title = 'Rất Chuẩn!';
-            advice = '👏 Âm tiết và thanh điệu rất chính xác.';
+
+          // MATCH LEVEL 3: Multi-character partial overlap (e.g. 工程师)
+          let matchCount = 0;
+          for (const ch of cleanTargetHz) {
+            if (cleanCand.includes(ch)) matchCount++;
           }
-          // MATCH LEVEL 3: Partial syllable match (multi-character words)
-          else {
-            let matchedChars = 0;
-            for (const ch of cleanTargetHz) {
-              if (cleanSpoken.includes(ch)) matchedChars++;
+          if (matchCount > 0 && cleanTargetHz.length > 1) {
+            const partial = Math.round((matchCount / cleanTargetHz.length) * 75);
+            if (partial > bestScore) {
+              bestScore = partial;
+              bestStars = '⭐⭐';
+              bestTitle = 'Đúng Một Phần 👍';
+              bestHeard = candidate;
+              bestAdvice = 'Bạn đã đọc đúng một phần. Hãy nghe lại giọng mẫu để đọc trọn vẹn hơn.';
             }
-            if (matchedChars > 0) {
-              score = Math.round((matchedChars / cleanTargetHz.length) * 85);
-              stars = '⭐⭐';
-              title = 'Khá Tốt!';
-              advice = '👍 Bạn đã đọc đúng một phần. Hãy nghe lại giọng mẫu để cải thiện.';
-            } else {
-              score = 40;
-              stars = '⭐';
-              title = 'Chưa Đúng';
-              advice = `Máy nghe thành: "${spoken}". Hãy bấm "Nghe giọng mẫu" và thử lại nhé!`;
+          } else {
+            // If completely different word
+            if (bestScore === 0) {
+              bestScore = 30;
+              bestStars = '⭐';
+              bestTitle = 'Chưa Chính Xác';
+              bestHeard = candidate;
+              bestAdvice = `Máy nghe thành: "${candidate}". Hãy nghe lại giọng mẫu và thử lại nhé!`;
             }
           }
-          heardDisplay = `"${spoken}"`;
-        } else {
-          // Audio volume was high, but STT timed out
-          score = 85;
-          stars = '⭐⭐';
-          title = 'Đã Ghi Âm 👍';
-          heardDisplay = '(Đã thu giọng bạn)';
-          advice = 'Hãy bấm "Nghe giọng của bạn" bên dưới để so sánh với giọng mẫu!';
         }
 
+        // Apply Results
         if (scoreBadge) {
-          scoreBadge.innerText = `${score}%`;
-          if (score >= 90) scoreBadge.className = 'voice-badge-score';
-          else if (score >= 70) scoreBadge.className = 'voice-badge-score medium';
+          scoreBadge.innerText = `${bestScore}%`;
+          if (bestScore >= 90) scoreBadge.className = 'voice-badge-score';
+          else if (bestScore >= 70) scoreBadge.className = 'voice-badge-score medium';
           else scoreBadge.className = 'voice-badge-score low';
         }
-        if (scoreStars) scoreStars.innerText = stars;
-        if (scoreTitle) scoreTitle.innerText = title;
-        if (heardEl) heardEl.innerText = heardDisplay;
-        if (adviceEl) adviceEl.innerText = advice;
+        if (scoreStars) scoreStars.innerText = bestStars;
+        if (scoreTitle) scoreTitle.innerText = bestTitle;
+        if (heardEl) heardEl.innerText = `"${bestHeard}"`;
+        if (adviceEl) adviceEl.innerText = bestAdvice;
 
-        if (score >= 80) {
+        if (bestScore >= 80) {
           AudioEngine.playCorrect();
         } else {
-          AudioEngine.playTone(260, 'sawtooth', 0.25);
+          AudioEngine.playWrong();
         }
       },
 
@@ -1761,6 +1794,10 @@
 
       cleanup() {
         if (this.isRecording) this.stop();
+        if (this.countdownTimer) {
+          clearInterval(this.countdownTimer);
+          this.countdownTimer = null;
+        }
         if (this.streamRef) {
           this.streamRef.getTracks().forEach(t => t.stop());
           this.streamRef = null;
