@@ -701,101 +701,224 @@
     /* VOICE COACH PRACTICE CARD IN VOCABULARY */
     .voice-practice-card {
       width: 100%;
-      background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%);
-      border: 1.5px solid #FCD34D;
+      background: #FFFFFF;
+      border: 1.5px solid #FDE68A;
       border-radius: var(--radius-md);
-      padding: 0.85rem;
+      padding: 0.85rem 1rem;
       margin-top: 0.35rem;
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 0.5rem;
       text-align: center;
-      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.1);
+      box-shadow: 0 4px 16px rgba(245, 158, 11, 0.08);
+      position: relative;
+    }
+    .voice-card-top {
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+      align-items: center;
     }
     .voice-tag {
       font-size: 0.72rem;
       font-weight: 800;
-      color: #92400E;
+      color: #D97706;
       letter-spacing: 0.5px;
+      text-transform: uppercase;
     }
-    .btn-voice-record {
-      border: none;
-      background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
-      color: white;
-      font-size: 0.95rem;
+    .voice-target-hint {
+      font-size: 0.82rem;
+      color: var(--text-sub);
+    }
+    .voice-target-hz {
+      font-family: 'Noto Sans SC', sans-serif;
       font-weight: 800;
-      padding: 0.7rem 1.25rem;
-      border-radius: 100px;
-      cursor: pointer;
-      display: inline-flex;
+      color: #0F172A;
+      font-size: 0.95rem;
+    }
+    .voice-target-py {
+      font-weight: 700;
+      color: var(--primary);
+    }
+    .voice-action-center {
+      display: flex;
       align-items: center;
-      gap: 0.5rem;
-      box-shadow: 0 4px 12px rgba(217, 119, 6, 0.3);
+      justify-content: center;
+      position: relative;
+      margin: 0.2rem 0;
+    }
+    .btn-mic-circle {
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      border: none;
+      background: linear-gradient(135deg, #FF6F43 0%, #FF4D2D 100%);
+      color: white;
+      font-size: 1.6rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 14px rgba(255, 77, 45, 0.35);
+      position: relative;
+      z-index: 2;
       transition: all 0.2s ease;
     }
-    .btn-voice-record:active { transform: scale(0.96); }
-    .btn-voice-record.recording {
+    .btn-mic-circle:active {
+      transform: scale(0.93);
+    }
+    .btn-mic-circle.recording {
       background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
-      box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.3);
-      animation: pulseRecord 1.2s infinite;
+      box-shadow: 0 0 0 6px rgba(239, 68, 68, 0.25);
     }
-    @keyframes pulseRecord {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.04); }
-      100% { transform: scale(1); }
+    .mic-ripple {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      border-radius: 50%;
+      border: 2px solid #EF4444;
+      opacity: 0;
+      pointer-events: none;
     }
-    .voice-status-text {
-      font-size: 0.78rem;
-      color: #78350F;
-      font-weight: 600;
+    .btn-mic-circle.recording .mic-ripple {
+      animation: rippleAnim 1.4s infinite;
     }
-    .voice-result-box {
-      width: 100%;
-      background: white;
-      border-radius: 14px;
-      padding: 0.65rem 0.75rem;
-      border: 1px solid #FDE68A;
+    @keyframes rippleAnim {
+      0% { transform: scale(1); opacity: 0.8; }
+      100% { transform: scale(1.6); opacity: 0; }
+    }
+    .voice-wave-container {
+      position: absolute;
       display: flex;
-      flex-direction: column;
       align-items: center;
-      gap: 0.3rem;
+      gap: 3px;
+      height: 28px;
+      right: -55px;
+      opacity: 0;
+      transition: opacity 0.2s;
     }
-    .voice-score-pill {
-      font-size: 1.1rem;
+    .voice-wave-container.active {
+      opacity: 1;
+    }
+    .wave-bar {
+      width: 4px;
+      height: 6px;
+      background: #EF4444;
+      border-radius: 4px;
+      transition: height 0.08s ease;
+    }
+    .voice-instruction-label {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text-sub);
+      transition: color 0.2s;
+    }
+    .voice-instruction-label.active {
+      color: #DC2626;
       font-weight: 800;
     }
-    .voice-feedback-text {
-      font-size: 0.8rem;
-      color: #374151;
+
+    /* RESULT & SCORING */
+    .voice-eval-box {
+      width: 100%;
+      background: #F8FAFC;
+      border: 1px solid #E2E8F0;
+      border-radius: var(--radius-sm);
+      padding: 0.75rem 0.85rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      animation: fadeIn 0.25s ease;
+    }
+    .voice-score-header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+    }
+    .voice-badge-score {
+      font-size: 1.45rem;
+      font-weight: 900;
+      color: var(--success);
+      line-height: 1;
+    }
+    .voice-badge-score.medium { color: #F59E0B; }
+    .voice-badge-score.low { color: #EF4444; }
+    .voice-score-meta {
+      text-align: left;
+    }
+    .voice-score-stars {
+      font-size: 0.85rem;
+      line-height: 1;
+    }
+    .voice-score-title {
+      font-size: 0.82rem;
+      font-weight: 800;
+      color: #0F172A;
+      margin-top: 0.15rem;
+    }
+    .voice-transcription-row {
+      display: flex;
+      justify-content: space-between;
+      background: white;
+      border-radius: 8px;
+      padding: 0.45rem 0.65rem;
+      border: 1px solid #E8EDF2;
+      font-size: 0.78rem;
+    }
+    .transcript-col {
+      display: flex;
+      flex-direction: column;
+      text-align: left;
+    }
+    .transcript-col:last-child {
+      text-align: right;
+    }
+    .t-lbl {
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .t-val {
+      font-weight: 800;
+      color: #0F172A;
+      margin-top: 0.1rem;
+    }
+    .t-val.model {
+      color: var(--primary);
+    }
+    .voice-advice {
+      font-size: 0.78rem;
+      color: var(--text-sub);
       font-weight: 600;
     }
-    .voice-compare-actions {
+    .voice-buttons-row {
       display: flex;
       gap: 0.5rem;
-      margin-top: 0.25rem;
-      flex-wrap: wrap;
       justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 0.15rem;
     }
-    .btn-compare-audio {
-      border: 1px solid #E5E7EB;
-      background: #F9FAFB;
-      color: #1F2937;
-      padding: 0.4rem 0.8rem;
-      border-radius: 100px;
+    .btn-voice-audio-pill {
+      border: 1.5px solid #CBD5E1;
+      background: white;
+      color: var(--text);
       font-size: 0.76rem;
       font-weight: 700;
+      padding: 0.4rem 0.8rem;
+      border-radius: 100px;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       gap: 0.35rem;
-      transition: all 0.15s;
+      transition: all 0.15s ease;
     }
-    .btn-compare-audio:active { transform: scale(0.95); }
-    .btn-compare-audio.btn-model {
-      background: #EFF6FF;
-      border-color: #BFDBFE;
-      color: #1D4ED8;
+    .btn-voice-audio-pill:active { transform: scale(0.96); }
+    .btn-voice-audio-pill.btn-model {
+      background: #FFF1EE;
+      border-color: #FED7AA;
+      color: var(--primary);
     }
 
     /* WORD TEACHING STEP */
@@ -1296,7 +1419,38 @@
       }
     };
 
-    /* VOICE COACH & SPEECH RECORDING MODULE */
+    /* COMPREHENSIVE PINYIN DICTIONARY & NORMALIZER */
+    let pinyinDict = {};
+    function initPinyinDict() {
+      if (Object.keys(pinyinDict).length > 0) return;
+      for (const lvl in window.LESSONS_DATA || {}) {
+        for (const u in window.LESSONS_DATA[lvl]) {
+          const unit = window.LESSONS_DATA[lvl][u];
+          if (unit.words && unit.words.list) {
+            unit.words.list.forEach(w => {
+              if (w.hz && w.py) {
+                pinyinDict[w.hz.trim()] = w.py.trim();
+                const chars = Array.from(w.hz.trim());
+                const syllables = w.py.trim().split(/\s+/);
+                if (chars.length === syllables.length) {
+                  chars.forEach((c, idx) => { pinyinDict[c] = syllables[idx]; });
+                }
+              }
+            });
+          }
+        }
+      }
+    }
+
+    function stripTone(str) {
+      if (!str) return '';
+      return str.normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .replace(/[^a-z0-9]/g, '');
+    }
+
+    /* REDESIGNED VOICE COACH & ACCURATE EVALUATOR */
     const VoiceCoach = {
       recognition: null,
       mediaRecorder: null,
@@ -1306,95 +1460,25 @@
       currentTargetText: '',
       currentTargetPy: '',
       streamRef: null,
+      audioCtx: null,
+      analyser: null,
+      animTimer: null,
       autoStopTimer: null,
+      maxVolume: 0,
+      speechCaptured: '',
 
       init() {
+        initPinyinDict();
         const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if (SpeechRec) {
+        if (SpeechRec && !this.recognition) {
           try {
             this.recognition = new SpeechRec();
             this.recognition.lang = 'zh-CN';
-            this.recognition.interimResults = false;
-            this.recognition.maxAlternatives = 3;
+            this.recognition.continuous = false;
+            this.recognition.interimResults = true;
+            this.recognition.maxAlternatives = 5;
           } catch(e) {}
         }
-      },
-
-      start(targetText, targetPy) {
-        this.init();
-        this.currentTargetText = targetText;
-        this.currentTargetPy = targetPy;
-        this.audioChunks = [];
-        if (this.userAudioUrl) {
-          URL.revokeObjectURL(this.userAudioUrl);
-          this.userAudioUrl = null;
-        }
-
-        const recordBtn = document.getElementById('btnVoiceRecord');
-        const statusText = document.getElementById('voiceStatusText');
-        const resultBox = document.getElementById('voiceResultBox');
-
-        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-          alert("Trình duyệt chưa hỗ trợ quyền micro trên trang này!");
-          return;
-        }
-
-        navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
-          this.streamRef = stream;
-          this.isRecording = true;
-          if (recordBtn) {
-            recordBtn.classList.add('recording');
-            recordBtn.innerHTML = '<span>⏹️</span><span>Đang ghi âm... (Bấm dừng)</span>';
-          }
-          if (statusText) {
-            statusText.innerHTML = `🔴 <em>Hãy đọc to:</em> <strong>${targetText}</strong> (${targetPy})`;
-            statusText.style.color = '#EF4444';
-          }
-          if (resultBox) resultBox.classList.add('hidden');
-
-          try {
-            this.mediaRecorder = new MediaRecorder(stream);
-            this.mediaRecorder.ondataavailable = e => {
-              if (e.data && e.data.size > 0) this.audioChunks.push(e.data);
-            };
-            this.mediaRecorder.onstop = () => {
-              const mime = this.mediaRecorder.mimeType || 'audio/webm';
-              const blob = new Blob(this.audioChunks, { type: mime });
-              this.userAudioUrl = URL.createObjectURL(blob);
-              if (this.streamRef) {
-                this.streamRef.getTracks().forEach(t => t.stop());
-                this.streamRef = null;
-              }
-            };
-            this.mediaRecorder.start();
-          } catch(e) {}
-
-          let recognizedText = '';
-          if (this.recognition) {
-            this.recognition.onresult = event => {
-              for (let i = 0; i < event.results.length; i++) {
-                recognizedText += event.results[i][0].transcript;
-              }
-            };
-            this.recognition.onerror = () => {};
-            this.recognition.onend = () => {
-              if (this.isRecording) {
-                this.stop(recognizedText);
-              }
-            };
-            try { this.recognition.start(); } catch(e) {}
-          }
-
-          this.autoStopTimer = setTimeout(() => {
-            if (this.isRecording) {
-              this.stop(recognizedText);
-            }
-          }, 4500);
-
-        }).catch(err => {
-          console.error("Mic error:", err);
-          alert("Vui lòng cấp quyền truy cập Micro trên điện thoại để luyện phát âm!");
-        });
       },
 
       toggle(targetText, targetPy) {
@@ -1405,10 +1489,126 @@
         }
       },
 
-      stop(recognizedStr = '') {
+      start(targetText, targetPy) {
+        this.init();
+        this.currentTargetText = targetText;
+        this.currentTargetPy = targetPy;
+        this.audioChunks = [];
+        this.maxVolume = 0;
+        this.speechCaptured = '';
+
+        if (this.userAudioUrl) {
+          URL.revokeObjectURL(this.userAudioUrl);
+          this.userAudioUrl = null;
+        }
+
+        const micBtn = document.getElementById('btnVoiceRecord');
+        const statusLabel = document.getElementById('voiceStatusText');
+        const waveBox = document.getElementById('voiceWaveBox');
+        const resultBox = document.getElementById('voiceResultBox');
+
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+          alert("Trình duyệt chưa hỗ trợ ghi âm micro!");
+          return;
+        }
+
+        navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+          this.streamRef = stream;
+          this.isRecording = true;
+
+          if (micBtn) micBtn.classList.add('recording');
+          if (waveBox) waveBox.classList.add('active');
+          if (statusLabel) {
+            statusLabel.classList.add('active');
+            statusLabel.innerHTML = `🔴 Đang nghe... Hãy đọc: <strong>${targetText}</strong> (${targetPy})`;
+          }
+          if (resultBox) resultBox.classList.add('hidden');
+
+          // AudioContext for Volume Analyzer & Live Waveform
+          try {
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            this.audioCtx = new AudioContext();
+            const source = this.audioCtx.createMediaStreamSource(stream);
+            this.analyser = this.audioCtx.createAnalyser();
+            this.analyser.fftSize = 32;
+            source.connect(this.analyser);
+
+            const bufferLength = this.analyser.frequencyBinCount;
+            const dataArray = new Uint8Array(bufferLength);
+
+            const updateWave = () => {
+              if (!this.isRecording) return;
+              this.analyser.getByteFrequencyData(dataArray);
+              let sum = 0;
+              for (let i = 0; i < bufferLength; i++) { sum += dataArray[i]; }
+              const avg = sum / bufferLength;
+              if (avg > this.maxVolume) this.maxVolume = avg;
+
+              for (let b = 1; b <= 5; b++) {
+                const bar = document.getElementById('wb' + b);
+                if (bar) {
+                  const factor = (dataArray[b % bufferLength] || avg) / 255;
+                  const h = Math.max(6, Math.min(26, Math.round(factor * 32)));
+                  bar.style.height = `${h}px`;
+                }
+              }
+              this.animTimer = requestAnimationFrame(updateWave);
+            };
+            this.animTimer = requestAnimationFrame(updateWave);
+          } catch(e) {}
+
+          // MediaRecorder for Playback
+          try {
+            this.mediaRecorder = new MediaRecorder(stream);
+            this.mediaRecorder.ondataavailable = e => {
+              if (e.data && e.data.size > 0) this.audioChunks.push(e.data);
+            };
+            this.mediaRecorder.onstop = () => {
+              const mime = (this.mediaRecorder && this.mediaRecorder.mimeType) || 'audio/webm';
+              const blob = new Blob(this.audioChunks, { type: mime });
+              this.userAudioUrl = URL.createObjectURL(blob);
+              if (this.streamRef) {
+                this.streamRef.getTracks().forEach(t => t.stop());
+                this.streamRef = null;
+              }
+            };
+            this.mediaRecorder.start(100);
+          } catch(e) {}
+
+          // SpeechRecognition
+          if (this.recognition) {
+            this.recognition.onresult = event => {
+              let res = '';
+              for (let i = 0; i < event.results.length; i++) {
+                const alt = event.results[i][0];
+                if (alt && alt.transcript) res += alt.transcript;
+              }
+              if (res) this.speechCaptured = res;
+            };
+            this.recognition.onerror = () => {};
+            this.recognition.onend = () => {
+              if (this.isRecording) this.stop();
+            };
+            try { this.recognition.start(); } catch(e) {}
+          }
+
+          // Auto finish after 3.8 seconds if user hasn't tapped stop
+          this.autoStopTimer = setTimeout(() => {
+            if (this.isRecording) this.stop();
+          }, 3800);
+
+        }).catch(err => {
+          console.error("Mic error:", err);
+          alert("Vui lòng cấp quyền Micro trên điện thoại để luyện phát âm!");
+        });
+      },
+
+      stop() {
         if (!this.isRecording) return;
         this.isRecording = false;
+
         if (this.autoStopTimer) clearTimeout(this.autoStopTimer);
+        if (this.animTimer) cancelAnimationFrame(this.animTimer);
 
         if (this.recognition) {
           try { this.recognition.stop(); } catch(e) {}
@@ -1416,62 +1616,140 @@
         if (this.mediaRecorder && this.mediaRecorder.state !== 'inactive') {
           try { this.mediaRecorder.stop(); } catch(e) {}
         }
+        if (this.audioCtx) {
+          try { this.audioCtx.close(); } catch(e) {}
+          this.audioCtx = null;
+        }
 
-        const recordBtn = document.getElementById('btnVoiceRecord');
-        if (recordBtn) {
-          recordBtn.classList.remove('recording');
-          recordBtn.innerHTML = '<span>🎙️</span><span>Luyện Đọc Lại</span>';
+        const micBtn = document.getElementById('btnVoiceRecord');
+        const statusLabel = document.getElementById('voiceStatusText');
+        const waveBox = document.getElementById('voiceWaveBox');
+
+        if (micBtn) micBtn.classList.remove('recording');
+        if (waveBox) waveBox.classList.remove('active');
+        if (statusLabel) {
+          statusLabel.classList.remove('active');
+          statusLabel.innerText = "Đang đánh giá phát âm...";
+        }
+
+        for (let b = 1; b <= 5; b++) {
+          const bar = document.getElementById('wb' + b);
+          if (bar) bar.style.height = '6px';
         }
 
         setTimeout(() => {
-          this.evaluate(recognizedStr);
-        }, 350);
+          this.evaluate();
+        }, 400);
       },
 
-      evaluate(spoken) {
-        const statusText = document.getElementById('voiceStatusText');
+      evaluate() {
         const resultBox = document.getElementById('voiceResultBox');
-        const scoreVal = document.getElementById('voiceScoreVal');
-        const feedbackText = document.getElementById('voiceFeedbackText');
-        const userPlayBtn = document.getElementById('btnPlayUserAudio');
+        const scoreBadge = document.getElementById('voiceScoreBadge');
+        const scoreStars = document.getElementById('voiceScoreStars');
+        const scoreTitle = document.getElementById('voiceScoreTitle');
+        const heardEl = document.getElementById('voiceHeardText');
+        const expectedEl = document.getElementById('voiceExpectedText');
+        const adviceEl = document.getElementById('voiceAdviceText');
+        const statusLabel = document.getElementById('voiceStatusText');
+        const btnPlayUser = document.getElementById('btnPlayUserAudio');
 
         if (!resultBox) return;
         resultBox.classList.remove('hidden');
 
-        const target = (this.currentTargetText || '').trim();
-        let score = 90;
+        const targetHz = (this.currentTargetText || '').trim();
+        const targetPy = (this.currentTargetPy || '').trim();
+        const targetCleanPy = stripTone(targetPy);
+        const spoken = (this.speechCaptured || '').trim();
+
+        if (expectedEl) expectedEl.innerText = `${targetHz} (${targetPy})`;
+        if (statusLabel) statusLabel.innerText = "Chạm vào Micro để luyện đọc lại";
+        if (btnPlayUser) btnPlayUser.style.display = this.userAudioUrl ? 'inline-flex' : 'none';
+
+        // 1. SILENCE CHECK: Did the mic hear actual sound?
+        if (this.maxVolume < 8 && !spoken) {
+          if (scoreBadge) {
+            scoreBadge.innerText = '0%';
+            scoreBadge.className = 'voice-badge-score low';
+          }
+          if (scoreStars) scoreStars.innerText = '❌';
+          if (scoreTitle) scoreTitle.innerText = 'Chưa nghe thấy giọng';
+          if (heardEl) heardEl.innerText = '(Không có âm thanh)';
+          if (adviceEl) adviceEl.innerText = '⚠️ Máy chưa thu được giọng nói! Hãy đọc to và giữ gần micro hơn.';
+          AudioEngine.playWrong();
+          return;
+        }
+
+        // 2. ACCURATE SCORING
+        let score = 0;
+        let stars = '⭐⭐⭐';
+        let title = 'Xuất Sắc!';
+        let advice = '🎉 Bạn phát âm rất chuẩn xác ngữ điệu.';
+        let heardDisplay = spoken || targetHz;
 
         if (spoken) {
           const cleanSpoken = spoken.replace(/[^\u4e00-\u9fa5a-zA-Z]/g, '');
-          const cleanTarget = target.replace(/[^\u4e00-\u9fa5a-zA-Z]/g, '');
-          if (cleanSpoken.includes(cleanTarget) || cleanTarget.includes(cleanSpoken)) {
+          const cleanTargetHz = targetHz.replace(/[^\u4e00-\u9fa5a-zA-Z]/g, '');
+
+          let spokenPy = pinyinDict[cleanSpoken] || '';
+          let cleanSpokenPy = stripTone(spokenPy);
+
+          // MATCH LEVEL 1: Exact Chinese characters match
+          if (cleanSpoken === cleanTargetHz || cleanSpoken.includes(cleanTargetHz) || cleanTargetHz.includes(cleanSpoken)) {
             score = 100;
-          } else {
-            score = 75;
+            stars = '⭐⭐⭐';
+            title = 'Hoàn Hảo!';
+            advice = '🎉 Phát âm và ngữ điệu chuẩn như người bản xứ.';
           }
-        }
-
-        if (score >= 95) {
-          AudioEngine.playCorrect();
-          if (scoreVal) { scoreVal.innerText = '100 Điểm ⭐⭐⭐'; scoreVal.style.color = '#10B981'; }
-          if (feedbackText) feedbackText.innerText = '🎉 Xuất sắc! Phát âm rất chuẩn ngữ điệu.';
-        } else if (score >= 80) {
-          AudioEngine.playTone(660, 'sine', 0.2);
-          if (scoreVal) { scoreVal.innerText = '85 Điểm ⭐⭐'; scoreVal.style.color = '#F59E0B'; }
-          if (feedbackText) feedbackText.innerText = '👏 Rất tốt! Bạn phát âm khá chuẩn.';
+          // MATCH LEVEL 2: Pinyin phoneme match (Homophone check)
+          else if (cleanSpokenPy && (cleanSpokenPy === targetCleanPy || cleanSpokenPy.includes(targetCleanPy) || targetCleanPy.includes(cleanSpokenPy))) {
+            score = 95;
+            stars = '⭐⭐⭐';
+            title = 'Rất Chuẩn!';
+            advice = '👏 Âm tiết và thanh điệu rất chính xác.';
+          }
+          // MATCH LEVEL 3: Partial syllable match (multi-character words)
+          else {
+            let matchedChars = 0;
+            for (const ch of cleanTargetHz) {
+              if (cleanSpoken.includes(ch)) matchedChars++;
+            }
+            if (matchedChars > 0) {
+              score = Math.round((matchedChars / cleanTargetHz.length) * 85);
+              stars = '⭐⭐';
+              title = 'Khá Tốt!';
+              advice = '👍 Bạn đã đọc đúng một phần. Hãy nghe lại giọng mẫu để cải thiện.';
+            } else {
+              score = 40;
+              stars = '⭐';
+              title = 'Chưa Đúng';
+              advice = `Máy nghe thành: "${spoken}". Hãy bấm "Nghe giọng mẫu" và thử lại nhé!`;
+            }
+          }
+          heardDisplay = `"${spoken}"`;
         } else {
-          AudioEngine.playTone(330, 'sine', 0.2);
-          if (scoreVal) { scoreVal.innerText = 'Cần luyện thêm 💪'; scoreVal.style.color = '#EF4444'; }
-          if (feedbackText) feedbackText.innerText = 'Hãy nghe lại giọng mẫu và thử đọc lại nhé.';
+          // Audio volume was high, but STT timed out
+          score = 85;
+          stars = '⭐⭐';
+          title = 'Đã Ghi Âm 👍';
+          heardDisplay = '(Đã thu giọng bạn)';
+          advice = 'Hãy bấm "Nghe giọng của bạn" bên dưới để so sánh với giọng mẫu!';
         }
 
-        if (statusText) {
-          statusText.innerHTML = `Đã ghi âm giọng đọc của bạn`;
-          statusText.style.color = 'var(--text-sub)';
+        if (scoreBadge) {
+          scoreBadge.innerText = `${score}%`;
+          if (score >= 90) scoreBadge.className = 'voice-badge-score';
+          else if (score >= 70) scoreBadge.className = 'voice-badge-score medium';
+          else scoreBadge.className = 'voice-badge-score low';
         }
+        if (scoreStars) scoreStars.innerText = stars;
+        if (scoreTitle) scoreTitle.innerText = title;
+        if (heardEl) heardEl.innerText = heardDisplay;
+        if (adviceEl) adviceEl.innerText = advice;
 
-        if (userPlayBtn) {
-          userPlayBtn.style.display = this.userAudioUrl ? 'inline-flex' : 'none';
+        if (score >= 80) {
+          AudioEngine.playCorrect();
+        } else {
+          AudioEngine.playTone(260, 'sawtooth', 0.25);
         }
       },
 
@@ -1486,6 +1764,10 @@
         if (this.streamRef) {
           this.streamRef.getTracks().forEach(t => t.stop());
           this.streamRef = null;
+        }
+        if (this.audioCtx) {
+          try { this.audioCtx.close(); } catch(e) {}
+          this.audioCtx = null;
         }
         if (this.userAudioUrl) {
           URL.revokeObjectURL(this.userAudioUrl);
@@ -2384,23 +2666,56 @@
 
             <!-- VOICE COACH PRACTICE CARD -->
             <div class="voice-practice-card">
-              <div class="voice-practice-header">
-                <span class="voice-tag">🎙️ LUYỆN NÓI THEO MẪU</span>
+              <div class="voice-card-top">
+                <div class="voice-tag">🎙️ Luyện Phát Âm Theo Mẫu</div>
+                <div class="voice-target-hint">Đọc to: <span class="voice-target-hz">${w.hz}</span> <span class="voice-target-py">(${w.py})</span></div>
               </div>
-              <button class="btn-voice-record" id="btnVoiceRecord" onclick="VoiceCoach.toggle('${w.hz}', '${w.py}')">
-                <span>🎙️</span>
-                <span>Bấm Để Ghi Âm Nói Theo</span>
-              </button>
-              <div class="voice-status-text" id="voiceStatusText">Bấm micro và đọc to: <strong>${w.hz}</strong> (${w.py})</div>
 
-              <div class="voice-result-box hidden" id="voiceResultBox">
-                <div class="voice-score-pill" id="voiceScoreVal">100 Điểm ⭐⭐⭐</div>
-                <div class="voice-feedback-text" id="voiceFeedbackText">🎉 Xuất sắc! Phát âm rất chuẩn.</div>
-                <div class="voice-compare-actions">
-                  <button class="btn-compare-audio" id="btnPlayUserAudio" onclick="VoiceCoach.playUserAudio()">
-                    <span>▶</span> Nghe lại giọng của bạn
+              <div class="voice-action-center">
+                <div class="voice-wave-container" id="voiceWaveBox">
+                  <div class="wave-bar" id="wb1"></div>
+                  <div class="wave-bar" id="wb2"></div>
+                  <div class="wave-bar" id="wb3"></div>
+                  <div class="wave-bar" id="wb4"></div>
+                  <div class="wave-bar" id="wb5"></div>
+                </div>
+
+                <button class="btn-mic-circle" id="btnVoiceRecord" onclick="VoiceCoach.toggle('${w.hz}', '${w.py}')" title="Bấm để nói">
+                  <span class="mic-icon">🎙️</span>
+                  <span class="mic-ripple"></span>
+                </button>
+              </div>
+
+              <div class="voice-instruction-label" id="voiceStatusText">Chạm vào Micro để bắt đầu nói</div>
+
+              <!-- RESULT & SCORING BOX -->
+              <div class="voice-eval-box hidden" id="voiceResultBox">
+                <div class="voice-score-header">
+                  <div class="voice-badge-score" id="voiceScoreBadge">100%</div>
+                  <div class="voice-score-meta">
+                    <div class="voice-score-stars" id="voiceScoreStars">⭐⭐⭐</div>
+                    <div class="voice-score-title" id="voiceScoreTitle">Hoàn Hảo!</div>
+                  </div>
+                </div>
+
+                <div class="voice-transcription-row">
+                  <div class="transcript-col">
+                    <span class="t-lbl">Máy nghe thấy:</span>
+                    <span class="t-val" id="voiceHeardText">"你"</span>
+                  </div>
+                  <div class="transcript-col">
+                    <span class="t-lbl">Từ chuẩn:</span>
+                    <span class="t-val model" id="voiceExpectedText">${w.hz} (${w.py})</span>
+                  </div>
+                </div>
+
+                <div class="voice-advice" id="voiceAdviceText">Phát âm rất chuẩn xác và tự nhiên.</div>
+
+                <div class="voice-buttons-row">
+                  <button class="btn-voice-audio-pill" id="btnPlayUserAudio" onclick="VoiceCoach.playUserAudio()">
+                    <span>▶</span> Nghe giọng của bạn
                   </button>
-                  <button class="btn-compare-audio btn-model" onclick="AudioEngine.playUrlOrTTS('${w.audio}', '${w.hz}')">
+                  <button class="btn-voice-audio-pill btn-model" onclick="AudioEngine.playUrlOrTTS('${w.audio}', '${w.hz}')">
                     <span>🔊</span> Nghe giọng mẫu
                   </button>
                 </div>
