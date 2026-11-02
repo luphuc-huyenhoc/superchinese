@@ -1041,8 +1041,38 @@
       width: 100%; height: 100%; object-fit: cover; border-radius: 12px; pointer-events: none;
     }
     .quiz-opt-btn:active { transform: scale(0.97); }
+    .quiz-opt-btn.selected {
+      background: #FFF7ED !important;
+      border-color: var(--primary) !important;
+      color: var(--primary) !important;
+      box-shadow: 0 0 0 3px rgba(255, 90, 54, 0.2);
+    }
     .quiz-opt-btn.correct { background: var(--success-soft) !important; border-color: var(--success) !important; color: #065F46 !important; }
     .quiz-opt-btn.wrong { background: var(--danger-soft) !important; border-color: var(--danger) !important; color: #991B1B !important; }
+
+    /* TAP TO SPEAK INTERACTIVE TEXTS */
+    .tap-to-speak {
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.15s ease;
+      position: relative;
+    }
+    .tap-to-speak:active {
+      transform: scale(0.97);
+      opacity: 0.85;
+    }
+    .tap-sound-hint {
+      display: inline-block;
+      font-size: 0.72rem;
+      color: var(--primary);
+      font-weight: 700;
+      margin-top: 0.35rem;
+      background: #FFF7ED;
+      padding: 0.2rem 0.55rem;
+      border-radius: 100px;
+      border: 1px solid #FFEDD5;
+      cursor: pointer;
+    }
 
     /* UNSCRAMBLE QUIZ */
     .unscramble-area { display: flex; flex-direction: column; gap: 0.85rem; width: 100%; margin-top: 0.35rem; }
@@ -1369,29 +1399,97 @@
         }
       },
       playTone(freq, type = 'sine', duration = 0.2) {
+        this.init();
         if (!this.ctx) return;
         const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
         osc.type = type;
         osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
-        gain.gain.setValueAtTime(0.18, this.ctx.currentTime);
+        gain.gain.setValueAtTime(0.2, this.ctx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + duration);
         osc.connect(gain);
         gain.connect(this.ctx.destination);
         osc.start();
         osc.stop(this.ctx.currentTime + duration);
       },
+      playTap() {
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(540, now);
+        osc.frequency.exponentialRampToValueAtTime(820, now + 0.04);
+        gain.gain.setValueAtTime(0.12, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.045);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.045);
+      },
+      playCheck() {
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(440, now);
+        osc.frequency.exponentialRampToValueAtTime(659.25, now + 0.09);
+        gain.gain.setValueAtTime(0.25, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.1);
+      },
       playCorrect() {
-        this.playTone(587.33, 'triangle', 0.12);
-        setTimeout(() => this.playTone(880, 'triangle', 0.25), 100);
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc1 = this.ctx.createOscillator();
+        const gain1 = this.ctx.createGain();
+        osc1.type = 'sine';
+        osc1.frequency.setValueAtTime(659.25, now); // E5
+        gain1.gain.setValueAtTime(0.25, now);
+        gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+        osc1.connect(gain1);
+        gain1.connect(this.ctx.destination);
+        osc1.start(now);
+        osc1.stop(now + 0.12);
+
+        const osc2 = this.ctx.createOscillator();
+        const gain2 = this.ctx.createGain();
+        osc2.type = 'triangle';
+        osc2.frequency.setValueAtTime(880, now + 0.08); // A5
+        gain2.gain.setValueAtTime(0.28, now + 0.08);
+        gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+        osc2.connect(gain2);
+        gain2.connect(this.ctx.destination);
+        osc2.start(now + 0.08);
+        osc2.stop(now + 0.3);
       },
       playWrong() {
-        this.playTone(220, 'sawtooth', 0.2);
-        setTimeout(() => this.playTone(180, 'sawtooth', 0.3), 150);
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(261.63, now); // C4
+        osc.frequency.linearRampToValueAtTime(196, now + 0.22); // G3
+        gain.gain.setValueAtTime(0.2, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.22);
       },
       playUrlOrTTS(url, text, onEnded) {
+        this.init();
         if (this.currentAudio) {
-          this.currentAudio.pause();
+          try { this.currentAudio.pause(); } catch(e) {}
           this.currentAudio = null;
         }
         if (url && url.startsWith('http')) {
@@ -1406,11 +1504,13 @@
         }
       },
       speakTTS(text, onEnded) {
-        if ('speechSynthesis' in window && text) {
+        if (!text) { if (onEnded) onEnded(); return; }
+        const clean = text.replace(/[\(\)\[\]\{\}\<\>\/\\\|_~]/g, '').trim();
+        if ('speechSynthesis' in window && clean) {
           window.speechSynthesis.cancel();
-          const u = new SpeechSynthesisUtterance(text);
+          const u = new SpeechSynthesisUtterance(clean);
           u.lang = 'zh-CN';
-          u.rate = 0.85;
+          u.rate = 0.82;
           if (onEnded) u.onend = onEnded;
           window.speechSynthesis.speak(u);
         } else {
@@ -2648,6 +2748,11 @@
     /* LAUNCH SPECIFIC MODULE */
     function launchSubModule(unitNum, modType) {
       AudioEngine.init();
+      if (modType === 'test') {
+        AudioEngine.playCheck();
+      } else {
+        AudioEngine.playTap();
+      }
       currentUnit = unitNum;
       currentModule = modType;
 
@@ -2729,6 +2834,12 @@
     }
 
     function handleContinueClick() {
+      const btn = document.getElementById('btnContinue');
+      if (btn && btn.innerText && btn.innerText.includes('Kiểm Tra')) {
+        AudioEngine.playCheck();
+      } else {
+        AudioEngine.playTap();
+      }
       if (continueActionOverride) {
         continueActionOverride();
       } else {
@@ -2769,8 +2880,8 @@
         viewport.innerHTML = `
           <div class="step-word">
             <div class="step-tag">${w.type || 'Từ Vựng'}</div>
-            <div class="step-hz">${w.hz}</div>
-            <div class="step-py">${w.py}</div>
+            <div class="step-hz tap-to-speak" onclick="AudioEngine.playUrlOrTTS('${w.audio}', '${w.hz}')" title="Chạm chữ để nghe phát âm">${w.hz}</div>
+            <div class="step-py tap-to-speak" onclick="AudioEngine.playUrlOrTTS('${w.audio}', '${w.hz}')" title="Chạm chữ để nghe phát âm">${w.py}</div>
             <button class="btn-audio-pill" onclick="AudioEngine.playUrlOrTTS('${w.audio}', '${w.hz}')">
               🔊 Nghe phát âm mẫu
             </button>
@@ -2780,7 +2891,7 @@
             <div class="voice-practice-card">
               <div class="voice-card-top">
                 <div class="voice-tag">🎙️ Luyện Phát Âm Theo Mẫu</div>
-                <div class="voice-target-hint">Đọc to: <span class="voice-target-hz">${w.hz}</span> <span class="voice-target-py">(${w.py})</span></div>
+                <div class="voice-target-hint tap-to-speak" onclick="AudioEngine.playUrlOrTTS('${w.audio}', '${w.hz}')">Đọc to: <span class="voice-target-hz">${w.hz}</span> <span class="voice-target-py">(${w.py}) 🔊</span></div>
               </div>
 
               <div class="voice-action-center">
@@ -2835,8 +2946,8 @@
             </div>
 
             ${w.example ? `
-              <div class="step-example-card">
-                <div class="ex-label">Ví dụ thực tế</div>
+              <div class="step-example-card tap-to-speak" onclick="AudioEngine.playUrlOrTTS('${w.example.audio || ''}', '${w.example.hz}')" title="Chạm chữ để nghe câu ví dụ">
+                <div class="ex-label">Ví dụ thực tế (Chạm chữ để nghe 🔊)</div>
                 <div class="ex-hz-text">${w.example.hz}</div>
                 <div class="ex-py-text">${w.example.py}</div>
                 <div class="ex-vi-text">${w.example.vi}</div>
@@ -2855,17 +2966,17 @@
         viewport.innerHTML = `
           <div class="step-grammar">
             <div class="step-tag" style="background:var(--purple-soft); color:var(--purple); align-self:center;">Cấu Trúc Ngữ Pháp</div>
-            <div class="grammar-hero-card">
-              <div class="grammar-rule-title">${g.rule}</div>
+            <div class="grammar-hero-card tap-to-speak" onclick="AudioEngine.speakTTS('${g.rule}')" title="Chạm chữ để nghe đọc">
+              <div class="grammar-rule-title">${g.rule} 🔊</div>
               <div class="grammar-explain-vi">${g.explain || 'Cấu trúc ngữ pháp quan trọng'}</div>
             </div>
 
             ${g.example ? `
-              <div class="grammar-example-box">
-                <div class="ex-label">Mẫu câu áp dụng</div>
+              <div class="grammar-example-box tap-to-speak" onclick="AudioEngine.playUrlOrTTS('${g.example.audio || ''}', '${g.example.hz}')" title="Chạm chữ để nghe câu mẫu">
+                <div class="ex-label">Mẫu câu áp dụng (Chạm chữ để nghe 🔊)</div>
                 <div class="ex-hz-text">${g.example.hz}</div>
                 <div class="ex-py-text">${g.example.py}</div>
-                <button class="btn-audio-pill" style="margin-top:0.65rem;" onclick="AudioEngine.playUrlOrTTS('${g.example.audio}', '${g.example.hz}')">
+                <button class="btn-audio-pill" style="margin-top:0.65rem;" onclick="event.stopPropagation(); AudioEngine.playUrlOrTTS('${g.example.audio}', '${g.example.hz}')">
                   🔊 Nghe câu mẫu
                 </button>
               </div>
@@ -2889,7 +3000,7 @@
         }
 
         let bubblesHtml = dlg.sentences.map((s, idx) => `
-          <div class="dialogue-bubble-row" id="dlgRow_${idx}" onclick="playDialogueSentence(${idx})">
+          <div class="dialogue-bubble-row tap-to-speak" id="dlgRow_${idx}" onclick="playDialogueSentence(${idx})">
             <div class="dlg-avatar">${s.role.charAt(0)}</div>
             <div style="flex:1;">
               <div class="dlg-text-hz">${s.hz}</div>
@@ -2911,7 +3022,7 @@
               ${bubblesHtml}
             </div>
             <div class="dlg-action-area">
-              <button class="btn-continue" onclick="advanceStep()">
+              <button class="btn-continue" onclick="AudioEngine.playCheck(); advanceStep();">
                 Bắt Đầu Kiểm Tra Đọc Hiểu ➔
               </button>
             </div>
@@ -2950,7 +3061,15 @@
     }
 
     /* CHOICE / TRUE-FALSE QUIZ */
+    let selectedQuizOption = null;
+
     function renderChoiceQuiz(viewport, q, btn) {
+      selectedQuizOption = null;
+      currentQuizAnswered = false;
+      btn.disabled = true;
+      btn.innerText = "Kiểm Tra";
+      continueActionOverride = () => verifyChoiceQuiz(q);
+
       const hasImages = q.options && q.options.some(isImageUrl);
       const promptImg = q.image ? `
         <div class="quiz-prompt-image-box">
@@ -2962,11 +3081,12 @@
         <div class="step-quiz">
           <div class="quiz-question-title">${q.title || (hasImages ? 'Chọn hình ảnh đúng:' : 'Chọn đáp án đúng:')}</div>
           ${promptImg}
-          <div class="quiz-display-box">
+          <div class="quiz-display-box tap-to-speak" onclick="AudioEngine.playUrlOrTTS('${q.audio || ''}', '${q.prompt}')" title="Chạm chữ để nghe phát âm">
             <div class="quiz-big-hz">${q.prompt || 'Nghe và chọn'}</div>
             ${q.py ? `<div class="quiz-big-py">${q.py}</div>` : ''}
             ${q.meaning ? `<div class="quiz-prompt-meaning">${q.meaning}</div>` : ''}
-            ${q.audio ? `<button class="quiz-audio-corner" onclick="AudioEngine.playUrlOrTTS('${q.audio}', '${q.prompt}')">🔊</button>` : ''}
+            <span class="tap-sound-hint">🔊 Chạm chữ để nghe</span>
+            ${q.audio ? `<button class="quiz-audio-corner" onclick="event.stopPropagation(); AudioEngine.playUrlOrTTS('${q.audio}', '${q.prompt}')">🔊</button>` : ''}
           </div>
           <div class="quiz-options ${hasImages ? 'is-image-grid' : ''}" id="stepQuizOptions"></div>
         </div>
@@ -2979,34 +3099,73 @@
           b.className = 'quiz-opt-btn is-img';
           b.innerHTML = `<img src="${optText}" alt="Option ${idx + 1}" loading="lazy" />`;
         } else {
-          b.className = 'quiz-opt-btn';
+          b.className = 'quiz-opt-btn tap-to-speak';
           b.innerText = optText;
         }
-        b.onclick = () => selectQuizOption(b, idx, q.answer);
+        b.onclick = () => selectQuizOption(b, idx, optText, q);
         optBox.appendChild(b);
       });
     }
 
-    function selectQuizOption(btn, chosen, correct) {
+    function selectQuizOption(btn, chosen, optText, q) {
       if (currentQuizAnswered) return;
+      selectedQuizOption = chosen;
+
+      // Play tap sound
+      AudioEngine.playTap();
+
+      // Pronounce option text if it's words
+      if (optText && !isImageUrl(optText)) {
+        AudioEngine.speakTTS(optText);
+      }
+
+      // Highlight selected option
+      const allBtns = document.querySelectorAll('.quiz-opt-btn');
+      allBtns.forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+
+      // Enable the "Kiểm Tra" button!
+      const checkBtn = document.getElementById('btnContinue');
+      if (checkBtn) {
+        checkBtn.disabled = false;
+        checkBtn.innerText = "Kiểm Tra";
+        continueActionOverride = () => verifyChoiceQuiz(q);
+      }
+    }
+
+    function verifyChoiceQuiz(q) {
+      if (currentQuizAnswered) {
+        advanceStep();
+        return;
+      }
+      if (selectedQuizOption === null) return;
       currentQuizAnswered = true;
+
+      // Play click/check sound
+      AudioEngine.playCheck();
 
       const allBtns = document.querySelectorAll('.quiz-opt-btn');
       allBtns.forEach(b => b.disabled = true);
 
-      if (chosen === correct) {
-        btn.classList.add('correct');
+      const chosenBtn = allBtns[selectedQuizOption];
+      const correctIdx = q.answer;
+
+      if (selectedQuizOption === correctIdx) {
+        if (chosenBtn) chosenBtn.classList.add('correct');
         AudioEngine.playCorrect();
         correctCount++;
       } else {
-        btn.classList.add('wrong');
-        if (allBtns[correct]) allBtns[correct].classList.add('correct');
+        if (chosenBtn) chosenBtn.classList.add('wrong');
+        if (allBtns[correctIdx]) allBtns[correctIdx].classList.add('correct');
         AudioEngine.playWrong();
       }
 
       const nextBtn = document.getElementById('btnContinue');
-      nextBtn.disabled = false;
-      nextBtn.innerText = "Tiếp Tục ➔";
+      if (nextBtn) {
+        nextBtn.disabled = false;
+        nextBtn.innerText = "Tiếp Tục ➔";
+      }
+      continueActionOverride = null;
     }
 
     /* UNSCRAMBLE SENTENCE QUIZ */
@@ -3033,11 +3192,12 @@
         <div class="step-quiz">
           <div class="quiz-question-title">${q.title || 'Sắp xếp từ thành câu:'}</div>
           ${promptImg}
-          <div class="quiz-display-box" style="padding:1rem;">
+          <div class="quiz-display-box tap-to-speak" onclick="AudioEngine.playUrlOrTTS('${q.audio || ''}', '${q.prompt || ''}')" style="padding:1rem;" title="Chạm chữ để nghe">
             <div class="quiz-big-hz" style="font-size:1.35rem; color:var(--text);">${q.prompt || 'Ghép các từ theo thứ tự chính xác'}</div>
             ${q.py ? `<div class="quiz-big-py" style="font-size:1rem;">${q.py}</div>` : ''}
             ${q.meaning ? `<div class="quiz-prompt-meaning">${q.meaning}</div>` : ''}
-            ${q.audio ? `<button class="quiz-audio-corner" onclick="AudioEngine.playUrlOrTTS('${q.audio}', '')">🔊</button>` : ''}
+            <span class="tap-sound-hint">🔊 Chạm chữ để nghe</span>
+            ${q.audio ? `<button class="quiz-audio-corner" onclick="event.stopPropagation(); AudioEngine.playUrlOrTTS('${q.audio}', '')">🔊</button>` : ''}
           </div>
 
           <div class="unscramble-area">
@@ -3064,7 +3224,7 @@
         unscrambleState.slots.forEach((wordIdx, slotIdx) => {
           const w = unscrambleState.words[wordIdx];
           const chip = document.createElement('button');
-          chip.className = 'unscramble-chip in-target';
+          chip.className = 'unscramble-chip in-target tap-to-speak';
           chip.innerText = w.text;
           chip.onclick = (e) => {
             e.stopPropagation();
@@ -3078,7 +3238,7 @@
       unscrambleState.words.forEach((w, wordIdx) => {
         const isUsed = unscrambleState.slots.includes(wordIdx);
         const chip = document.createElement('button');
-        chip.className = `unscramble-chip ${isUsed ? 'used' : ''}`;
+        chip.className = `unscramble-chip ${isUsed ? 'used' : 'tap-to-speak'}`;
         chip.innerText = w.text;
         chip.onclick = () => {
           if (!isUsed) addWordToTarget(wordIdx);
@@ -3102,20 +3262,33 @@
       if (currentQuizAnswered) return;
       unscrambleState.slots.push(wordIdx);
       const w = unscrambleState.words[wordIdx];
-      if (w && w.audio) {
-        AudioEngine.playUrlOrTTS(w.audio, w.text);
+      AudioEngine.playTap();
+      if (w) {
+        AudioEngine.playUrlOrTTS(w.audio || '', w.text || '');
       }
       updateUnscrambleUI();
     }
 
     function removeWordFromTarget(slotIdx) {
       if (currentQuizAnswered) return;
+      const wordIdx = unscrambleState.slots[slotIdx];
+      const w = unscrambleState.words[wordIdx];
+      AudioEngine.playTap();
+      if (w) {
+        AudioEngine.playUrlOrTTS(w.audio || '', w.text || '');
+      }
       unscrambleState.slots.splice(slotIdx, 1);
       updateUnscrambleUI();
     }
 
     function popLastUnscrambleWord() {
       if (currentQuizAnswered || unscrambleState.slots.length === 0) return;
+      const wordIdx = unscrambleState.slots[unscrambleState.slots.length - 1];
+      const w = unscrambleState.words[wordIdx];
+      AudioEngine.playTap();
+      if (w) {
+        AudioEngine.playUrlOrTTS(w.audio || '', w.text || '');
+      }
       unscrambleState.slots.pop();
       updateUnscrambleUI();
     }
@@ -3125,6 +3298,8 @@
         advanceStep();
         return;
       }
+
+      AudioEngine.playCheck();
 
       const targetBox = document.getElementById('unscrambleTarget');
       const isCorrect = unscrambleState.slots.every((wordIdx, i) => wordIdx === unscrambleState.correctOrder[i]);
