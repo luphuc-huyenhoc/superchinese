@@ -1295,6 +1295,525 @@
     .stat-val { font-size: 1.5rem; font-weight: 800; color: var(--primary); }
     .stat-lbl { font-size: 0.7rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-top: 0.2rem; }
 
+    /* HANZI WRITING & CALLIGRAPHY STYLES */
+    .btn-hdr-writing {
+      border: 1.5px solid #0D9488;
+      background: #F0FDFA;
+      color: #0F766E;
+      font-size: 0.8rem;
+      font-weight: 800;
+      padding: 0.35rem 0.65rem;
+      border-radius: 100px;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .btn-hdr-writing:active { transform: scale(0.95); }
+
+    .module-item.writing {
+      border-color: rgba(13, 148, 136, 0.22);
+    }
+    .module-item.writing:hover {
+      border-color: #0D9488;
+      box-shadow: 0 4px 14px rgba(13, 148, 136, 0.12);
+    }
+    .badge-writing {
+      background: #F0FDFA;
+      color: #0F766E;
+    }
+
+    .btn-write-shortcut {
+      border: 1.5px solid #0D9488;
+      background: #F0FDFA;
+      color: #0F766E;
+      padding: 0.45rem 1rem;
+      border-radius: 100px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      box-shadow: 0 2px 8px rgba(13, 148, 136, 0.12);
+      transition: all 0.15s;
+      margin-top: 0.4rem;
+    }
+    .btn-write-shortcut:active { transform: scale(0.95); }
+
+    .writing-screen {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      width: 100%; height: 100%; height: 100dvh;
+      background: #F8FAFC;
+      z-index: 1500;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-sizing: border-box;
+    }
+    @media (min-width: 500px) {
+      .writing-screen {
+        position: absolute;
+        max-width: 480px;
+        border-radius: 36px;
+      }
+    }
+
+    .writing-header {
+      height: 54px;
+      padding: 0 1rem;
+      background: white;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      flex-shrink: 0;
+      z-index: 10;
+    }
+    .btn-close-writing {
+      border: none;
+      background: #F1F5F9;
+      color: var(--text);
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      font-size: 1.1rem;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+    }
+    .btn-close-writing:active { transform: scale(0.92); }
+    .writing-header-center {
+      text-align: center;
+      flex: 1;
+    }
+    .writing-header-title {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: #0F172A;
+    }
+    .writing-header-sub {
+      font-size: 0.72rem;
+      color: var(--text-sub);
+      font-weight: 600;
+    }
+    .btn-search-hanzi {
+      border: none;
+      background: #F1F5F9;
+      color: var(--text);
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      font-size: 0.95rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+    }
+    .btn-search-hanzi:active { transform: scale(0.92); }
+
+    .writing-viewport {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0.75rem 1rem 1rem 1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.65rem;
+      -webkit-overflow-scrolling: touch;
+      box-sizing: border-box;
+    }
+
+    /* CHARACTER HERO CARD */
+    .hanzi-info-card {
+      width: 100%;
+      max-width: 380px;
+      background: white;
+      border-radius: var(--radius-md);
+      padding: 0.85rem 1rem;
+      border: 1.5px solid var(--border);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+      box-sizing: border-box;
+    }
+    .hz-hero-top {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .hz-char-large {
+      font-family: 'Noto Sans SC', sans-serif;
+      font-size: 3.2rem;
+      font-weight: 900;
+      line-height: 1;
+      color: #0F172A;
+      min-width: 65px;
+      text-align: center;
+      cursor: pointer;
+      user-select: none;
+      transition: transform 0.15s;
+    }
+    .hz-char-large:active { transform: scale(0.95); }
+    .hz-meta-col {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+    .hz-pinyin-row {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      flex-wrap: wrap;
+    }
+    .hz-py-text {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--primary);
+    }
+    .hz-hv-badge {
+      font-size: 0.75rem;
+      font-weight: 700;
+      background: #FEF3C7;
+      color: #92400E;
+      padding: 0.15rem 0.5rem;
+      border-radius: 6px;
+    }
+    .hz-btn-speaker {
+      border: none;
+      background: #F1F5F9;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+    }
+    .hz-btn-speaker:active { transform: scale(0.9); }
+    .hz-meaning-text {
+      font-size: 0.85rem;
+      color: var(--text);
+      font-weight: 600;
+      line-height: 1.35;
+    }
+    .hz-details-row {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      margin-top: 0.15rem;
+      flex-wrap: wrap;
+    }
+    .hz-detail-tag {
+      font-size: 0.7rem;
+      font-weight: 700;
+      background: #F1F5F9;
+      color: var(--text-sub);
+      padding: 0.15rem 0.45rem;
+      border-radius: 4px;
+    }
+
+    /* TIAN ZI GE CANVAS CONTAINER */
+    .tian-zi-ge-wrapper {
+      width: 100%;
+      max-width: 380px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .tian-zi-ge-box {
+      position: relative;
+      width: 250px;
+      height: 250px;
+      border-radius: 18px;
+      background-color: #FFFDF9;
+      border: 3px solid #CBD5E1;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.07);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      touch-action: none;
+      box-sizing: border-box;
+    }
+    /* Grid Lines (田字格) */
+    .tian-zi-ge-box::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 50%; bottom: 0; width: 0;
+      border-left: 1.5px dashed #CBD5E1;
+      pointer-events: none;
+      z-index: 1;
+    }
+    .tian-zi-ge-box::after {
+      content: '';
+      position: absolute;
+      left: 0; top: 50%; right: 0; height: 0;
+      border-top: 1.5px dashed #CBD5E1;
+      pointer-events: none;
+      z-index: 1;
+    }
+    /* Diagonal Grid Lines (米字格) */
+    .mi-zi-ge-diagonal {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 1;
+      background:
+        linear-gradient(to top right, transparent calc(50% - 1px), rgba(203, 213, 225, 0.6), transparent calc(50% + 1px)),
+        linear-gradient(to bottom right, transparent calc(50% - 1px), rgba(203, 213, 225, 0.6), transparent calc(50% + 1px));
+    }
+    #hanziWriterTarget {
+      position: relative;
+      z-index: 2;
+    }
+    .stroke-progress-indicator {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text-sub);
+    }
+    .stroke-progress-indicator strong {
+      color: var(--primary);
+    }
+
+    /* CONTROL BUTTONS */
+    .writing-controls-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.4rem;
+      width: 100%;
+      max-width: 380px;
+    }
+    .btn-w-ctrl {
+      border: 1.5px solid var(--border);
+      background: white;
+      color: var(--text);
+      padding: 0.55rem 0.35rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.78rem;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.2rem;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+      transition: all 0.15s;
+    }
+    .btn-w-ctrl:active { transform: scale(0.95); }
+    .btn-w-ctrl span { font-size: 1.05rem; }
+    .btn-w-ctrl.active {
+      background: #EFF6FF;
+      border-color: #3B82F6;
+      color: #1D4ED8;
+    }
+    .btn-w-ctrl.btn-demo:hover {
+      border-color: #10B981;
+      background: #ECFDF5;
+      color: #065F46;
+    }
+
+    /* FEEDBACK BANNER */
+    .writing-feedback-banner {
+      width: 100%;
+      max-width: 380px;
+      padding: 0.65rem 0.85rem;
+      border-radius: 12px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      box-sizing: border-box;
+      transition: all 0.2s;
+    }
+    .writing-feedback-banner.info {
+      background: #F1F5F9;
+      color: #334155;
+      border: 1px solid #E2E8F0;
+    }
+    .writing-feedback-banner.success {
+      background: #F0FDF4;
+      color: #166534;
+      border: 1.5px solid #86EFAC;
+    }
+    .writing-feedback-banner.warn {
+      background: #FEF2F2;
+      color: #991B1B;
+      border: 1.5px solid #FCA5A5;
+      animation: shake 0.3s ease-in-out;
+    }
+
+    /* CHARACTER COMPLETE CARD */
+    .char-complete-card {
+      width: 100%;
+      max-width: 380px;
+      background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%);
+      border: 2px solid #6EE7B7;
+      border-radius: var(--radius-md);
+      padding: 0.85rem 1rem;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.4rem;
+      box-sizing: border-box;
+      animation: popSlotIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .cc-badge {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: #065F46;
+    }
+    .cc-sub {
+      font-size: 0.8rem;
+      color: #047857;
+      font-weight: 600;
+    }
+    .cc-actions {
+      display: flex;
+      gap: 0.5rem;
+      width: 100%;
+      margin-top: 0.3rem;
+    }
+    .btn-cc-retry {
+      flex: 1;
+      border: 1.5px solid #A7F3D0;
+      background: white;
+      color: #065F46;
+      font-weight: 800;
+      font-size: 0.85rem;
+      padding: 0.55rem;
+      border-radius: 100px;
+      cursor: pointer;
+    }
+    .btn-cc-next {
+      flex: 2;
+      border: none;
+      background: #059669;
+      color: white;
+      font-weight: 800;
+      font-size: 0.85rem;
+      padding: 0.55rem;
+      border-radius: 100px;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(5, 150, 105, 0.3);
+    }
+
+    /* CHARACTER STRIP / CAROUSEL */
+    .char-strip-section {
+      width: 100%;
+      max-width: 380px;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      margin-top: 0.2rem;
+    }
+    .char-strip-title {
+      font-size: 0.72rem;
+      font-weight: 800;
+      color: var(--text-muted);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    .char-strip-row {
+      display: flex;
+      gap: 0.4rem;
+      overflow-x: auto;
+      padding: 0.25rem 0.1rem;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .char-strip-row::-webkit-scrollbar { display: none; }
+    .char-strip-chip {
+      position: relative;
+      flex-shrink: 0;
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: white;
+      border: 1.5px solid var(--border);
+      font-family: 'Noto Sans SC', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--text);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+    }
+    .char-strip-chip:active { transform: scale(0.92); }
+    .char-strip-chip.active {
+      border-color: var(--primary);
+      background: #FFF7ED;
+      color: var(--primary);
+      box-shadow: 0 2px 8px rgba(255, 90, 54, 0.25);
+    }
+    .char-strip-chip.done {
+      border-color: #10B981;
+      background: #F0FDF4;
+    }
+    .chip-done-check {
+      position: absolute;
+      top: -3px;
+      right: -3px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #10B981;
+      color: white;
+      font-size: 0.65rem;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+    }
+
+    /* WRITING FOOTER */
+    .writing-footer {
+      height: 58px;
+      padding: 0 1rem;
+      background: white;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      flex-shrink: 0;
+    }
+    .btn-footer-nav {
+      flex: 1;
+      height: 42px;
+      border-radius: 100px;
+      border: 1.5px solid var(--border);
+      background: white;
+      color: var(--text);
+      font-size: 0.9rem;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+    }
+    .btn-footer-nav:active { transform: scale(0.96); }
+    .btn-footer-nav.primary {
+      border: none;
+      background: var(--primary-gradient);
+      color: white;
+      box-shadow: 0 3px 10px rgba(255, 90, 54, 0.25);
+    }
+
     .hidden { display: none !important; }
   </style>
 </head>
@@ -1305,7 +1824,10 @@
       <div class="header-left" onclick="renderHome()" title="Lữ Phúc Chinese - Trang chủ">
         <img src="logo.jpg" alt="Lữ Phúc Chinese" class="header-brand-logo" />
       </div>
-      <div style="display:flex; align-items:center; gap:0.5rem;">
+      <div style="display:flex; align-items:center; gap:0.45rem;">
+        <button class="btn-hdr-writing" onclick="openWritingPracticeDefault()" title="Tập viết chữ Hán">
+          <span>✍️</span> <span>Viết Chữ</span>
+        </button>
         <div class="streak-badge" id="streakBadge" title="Tiến độ học tập">
           <span>🔥</span>
           <span id="streakCount">0 bài</span>
@@ -1381,6 +1903,99 @@
         </div>
 
         <button class="btn-continue" onclick="finishVictory()">Hoàn Thành ➔</button>
+      </div>
+    </div>
+
+    <!-- HANZI WRITING PRACTICE SCREEN -->
+    <div class="writing-screen hidden" id="screenWriting">
+      <!-- TOP NAVIGATION -->
+      <div class="writing-header">
+        <button class="btn-close-writing" onclick="HanziStudio.close()" title="Đóng">✕</button>
+        <div class="writing-header-center">
+          <div class="writing-header-title" id="writingHeaderTitle">✍️ Tập Viết Chữ Hán</div>
+          <div class="writing-header-sub" id="writingHeaderSub">Bài 1 • Chữ 1 / 10</div>
+        </div>
+        <button class="btn-search-hanzi" onclick="HanziStudio.openCustomPrompt()" title="Nhập chữ bất kỳ để viết">🔍</button>
+      </div>
+
+      <!-- MAIN WRITING SCROLL VIEWPORT -->
+      <div class="writing-viewport">
+        <!-- CHARACTER INFO HERO CARD -->
+        <div class="hanzi-info-card">
+          <div class="hz-hero-top">
+            <div class="hz-char-large tap-to-speak" id="hzLargeDisplay" onclick="HanziStudio.playCurrentHanziAudio()" title="Chạm để nghe phát âm">你</div>
+            <div class="hz-meta-col">
+              <div class="hz-pinyin-row">
+                <span class="hz-py-text" id="hzPinyinText">nǐ</span>
+                <span class="hz-hv-badge" id="hzHanVietBadge">Âm Hán Việt: Nhĩ</span>
+                <button class="hz-btn-speaker" onclick="HanziStudio.playCurrentHanziAudio()" title="Nghe phát âm">🔊</button>
+              </div>
+              <div class="hz-meaning-text" id="hzMeaningText">bạn, anh, chị, ông, bà...</div>
+              <div class="hz-details-row">
+                <span class="hz-detail-tag" id="hzStrokesCount">7 nét</span>
+                <span class="hz-detail-tag" id="hzContextWord">Từ vựng: 你</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TIAN ZI GE CANVAS BOX -->
+        <div class="tian-zi-ge-wrapper">
+          <div class="tian-zi-ge-box" id="tianZiGeBox">
+            <div class="mi-zi-ge-diagonal"></div>
+            <div id="hanziWriterTarget"></div>
+          </div>
+          <!-- Stroke Order Progress Dots / Status -->
+          <div class="stroke-progress-indicator" id="strokeProgressText">
+            Nét: <strong>0</strong> / <strong>7</strong>
+          </div>
+        </div>
+
+        <!-- CONTROL BUTTONS -->
+        <div class="writing-controls-grid">
+          <button class="btn-w-ctrl btn-demo" id="btnAnimateStroke" onclick="HanziStudio.animate()">
+            <span>▶</span> Xem Mẫu
+          </button>
+          <button class="btn-w-ctrl btn-write active" id="btnStartQuiz" onclick="HanziStudio.startQuiz()">
+            <span>✍️</span> Luyện Viết
+          </button>
+          <button class="btn-w-ctrl btn-hint" id="btnToggleOutline" onclick="HanziStudio.toggleOutline()">
+            <span>💡</span> Gợi Ý: BẬT
+          </button>
+          <button class="btn-w-ctrl btn-reset" onclick="HanziStudio.reset()">
+            <span>🔄</span> Viết Lại
+          </button>
+        </div>
+
+        <!-- INSTRUCTION & REAL-TIME FEEDBACK MESSAGE -->
+        <div class="writing-feedback-banner info" id="writingFeedbackBanner">
+          <span class="wf-icon" id="wfIcon">👉</span>
+          <span class="wf-msg" id="wfMsg">Dùng ngón tay hoặc chuột vẽ từng nét theo thứ tự vào ô vuông.</span>
+        </div>
+
+        <!-- CONGRATULATIONS POPUP ON FINISH -->
+        <div class="char-complete-card hidden" id="charCompleteCard">
+          <div class="cc-badge">🎉 Hoàn Thành Xuất Sắc!</div>
+          <div class="cc-sub">Nét bút rất chuẩn xác và đúng thứ tự.</div>
+          <div class="cc-actions">
+            <button class="btn-cc-retry" onclick="HanziStudio.reset()">Viết Lại</button>
+            <button class="btn-cc-next" onclick="HanziStudio.nextChar()">Chữ Tiếp Theo ➔</button>
+          </div>
+        </div>
+
+        <!-- CHARACTER STRIP / CAROUSEL -->
+        <div class="char-strip-section">
+          <div class="char-strip-title">DANH SÁCH CHỮ TRONG BÀI:</div>
+          <div class="char-strip-row" id="charStripRow">
+            <!-- Chips injected dynamically -->
+          </div>
+        </div>
+      </div>
+
+      <!-- FOOTER ACTION BAR -->
+      <div class="writing-footer">
+        <button class="btn-footer-nav" id="btnPrevChar" onclick="HanziStudio.prevChar()">◀ Chữ Trước</button>
+        <button class="btn-footer-nav primary" id="btnNextChar" onclick="HanziStudio.nextChar()">Chữ Tiếp ▶</button>
       </div>
     </div>
 
@@ -1543,6 +2158,11 @@
 
   <!-- COMPLETE COMPILED LESSON DATA -->
   <script src="lessons_data.js"></script>
+
+  <!-- HANZI WRITER CALLIGRAPHY ENGINE & PRE-CACHED STROKE DATA -->
+  <script src="hanzi-writer.min.js"></script>
+  <script src="hanzi_data.js"></script>
+  <script src="hanzi_meta.js"></script>
 
   <script>
     /* SOUND & AUDIO SYNTHESIZER ENGINE (HIGH VOLUME BOOSTED) */
@@ -2376,14 +2996,14 @@
       getUnitStats(lvl, unit) {
         const data = this.getProgress();
         const u = (data[lvl] && data[lvl][unit]) || {};
-        const mods = ['words', 'grammar', 'text', 'test'];
+        const mods = ['words', 'grammar', 'text', 'test', 'writing'];
         const done = mods.filter(m => u[m]).length;
         return { done, total: mods.length, isAllDone: done === mods.length };
       },
       getLevelStats(lvl) {
         const lvlData = window.LESSONS_DATA[lvl] || {};
         const unitKeys = Object.keys(lvlData);
-        const total = unitKeys.length * 4;
+        const total = unitKeys.length * 5;
         let done = 0;
         for (const u of unitKeys) {
           const stats = this.getUnitStats(lvl, u);
@@ -2908,6 +3528,9 @@
         const isGrammarDone = ProgressManager.isCompleted(currentLevel, u, 'grammar');
         const isTextDone = ProgressManager.isCompleted(currentLevel, u, 'text');
         const isTestDone = ProgressManager.isCompleted(currentLevel, u, 'test');
+        const isWritingDone = ProgressManager.isCompleted(currentLevel, u, 'writing');
+        const unitWritingChars = getUnitCharacters(currentLevel, u);
+        const writingCharsCount = unitWritingChars.length;
 
         const card = document.createElement('div');
         const isActive = activeUnitCard === u;
@@ -2915,9 +3538,9 @@
 
         let progressPill = '';
         if (uProg.isAllDone) {
-          progressPill = `<span class="unit-progress-pill done">✓ Đã xong 4/4</span>`;
+          progressPill = `<span class="unit-progress-pill done">✓ Đã xong 5/5</span>`;
         } else if (uProg.done > 0) {
-          progressPill = `<span class="unit-progress-pill partial">Đã học ${uProg.done}/4</span>`;
+          progressPill = `<span class="unit-progress-pill partial">Đã học ${uProg.done}/5</span>`;
         }
 
         card.innerHTML = `
@@ -2926,7 +3549,7 @@
               <div class="unit-num-badge ${uProg.isAllDone ? 'is-done' : ''}">${uProg.isAllDone ? '✓' : u}</div>
               <div class="unit-header-info">
                 <h4>Bài ${u}${topic} ${progressPill}</h4>
-                <p>Từ vựng, Ngữ pháp, Hội thoại & Kiểm tra</p>
+                <p>Từ vựng, Ngữ pháp, Hội thoại, Kiểm tra & Tập viết</p>
               </div>
             </div>
             <div class="unit-arrow-icon">▼</div>
@@ -2983,6 +3606,19 @@
               </div>
               <div class="module-name">${isTestDone ? '✓ ' : ''}Kiểm Tra</div>
               <div class="module-desc">Nghe ghi âm & chọn đáp án</div>
+            </div>
+
+            <!-- 5. TẬP VIẾT CHỮ HÁN -->
+            <div class="module-item writing ${isWritingDone ? 'is-learned' : ''}" onclick="launchWritingModule(${u})">
+              <div class="module-top">
+                <span class="module-icon">✍️</span>
+                <div style="display:flex; align-items:center; gap:0.4rem;">
+                  <span class="module-badge ${isWritingDone ? 'badge-learned' : 'badge-writing'}">${isWritingDone ? '✓ Đã viết' : `${writingCharsCount} chữ`}</span>
+                  <button class="btn-toggle-learned" title="${isWritingDone ? 'Đánh dấu chưa học' : 'Đánh dấu đã học'}" onclick="toggleLearnedModule(event, '${currentLevel}', ${u}, 'writing')">${isWritingDone ? '✅' : '⚪'}</button>
+                </div>
+              </div>
+              <div class="module-name">${isWritingDone ? '✓ ' : ''}Tập Viết</div>
+              <div class="module-desc">Thứ tự nét bút, viết theo mẫu & chấm điểm</div>
             </div>
           </div>
         `;
@@ -3133,6 +3769,11 @@
               🔊 Nghe phát âm mẫu
             </button>
             <div class="step-meaning">${w.vi}</div>
+            <div style="display:flex; justify-content:center; margin-top:0.35rem;">
+              <button type="button" class="btn-write-shortcut" onclick="openWritingPracticeForWord('${w.hz}')">
+                <span>✍️</span> Tập viết chữ này (${w.hz})
+              </button>
+            </div>
 
             <!-- VOICE COACH PRACTICE CARD -->
             <div class="voice-practice-card">
@@ -3928,6 +4569,460 @@
       document.getElementById('screenVictory').classList.add('hidden');
       renderRoadmap();
     }
+
+    /* ==========================================================================
+       INTERACTIVE HANZI CALLIGRAPHY & STROKE ORDER STUDIO (TẬP VIẾT CHỮ HÁN)
+       ========================================================================== */
+    function getUnitCharacters(lvl, unitNum) {
+      const lvlData = window.LESSONS_DATA && window.LESSONS_DATA[lvl];
+      if (!lvlData || !lvlData[unitNum]) return [];
+      const uInfo = lvlData[unitNum];
+      const words = (uInfo.words && uInfo.words.list) || [];
+      const charsMap = new Map();
+
+      words.forEach(w => {
+        if (!w || !w.hz) return;
+        const matched = w.hz.match(/[\u4e00-\u9fa5]/g);
+        if (matched) {
+          matched.forEach(char => {
+            if (!charsMap.has(char)) {
+              const meta = (window.HANZI_META && window.HANZI_META[char]) || {};
+              charsMap.set(char, {
+                hz: char,
+                py: meta.py || w.py || '',
+                hv: meta.hv || '',
+                vi: meta.vi || w.vi || '',
+                word: w.hz,
+                wordVi: w.vi,
+                audio: w.audio || ''
+              });
+            }
+          });
+        }
+      });
+
+      return Array.from(charsMap.values());
+    }
+
+    function launchWritingModule(unitNum) {
+      AudioEngine.init();
+      AudioEngine.playTap();
+      HanziStudio.openForUnit(unitNum);
+    }
+
+    function openWritingPracticeForWord(wordHz) {
+      AudioEngine.init();
+      AudioEngine.playTap();
+      HanziStudio.openForWord(wordHz);
+    }
+
+    function openWritingPracticeDefault() {
+      AudioEngine.init();
+      AudioEngine.playTap();
+      HanziStudio.openForUnit(currentUnit || 1);
+    }
+
+    const HanziStudio = {
+      unitNum: null,
+      charsList: [],
+      currentIndex: 0,
+      writer: null,
+      showOutline: true,
+      currentQuizMistakes: 0,
+      completedChars: new Set(),
+      previousScreen: 'roadmap',
+
+      openForUnit(u) {
+        const chars = getUnitCharacters(currentLevel, u);
+        if (!chars || chars.length === 0) {
+          alert(`Bài ${u} chưa có danh sách chữ để tập viết.`);
+          return;
+        }
+        this.unitNum = u;
+        this.charsList = chars;
+        this.currentIndex = 0;
+        this.completedChars.clear();
+        this.showScreen(`Bài ${u} • Tập Viết Chữ Hán`);
+      },
+
+      openForWord(wordHz) {
+        if (!wordHz) return;
+        const matched = wordHz.match(/[\u4e00-\u9fa5]/g);
+        if (!matched || matched.length === 0) return;
+        
+        const list = [];
+        const seen = new Set();
+        matched.forEach(char => {
+          if (!seen.has(char)) {
+            seen.add(char);
+            const meta = (window.HANZI_META && window.HANZI_META[char]) || {};
+            list.push({
+              hz: char,
+              py: meta.py || '',
+              hv: meta.hv || '',
+              vi: meta.vi || `Chữ trong từ ${wordHz}`,
+              word: wordHz,
+              wordVi: '',
+              audio: ''
+            });
+          }
+        });
+
+        this.unitNum = null;
+        this.charsList = list;
+        this.currentIndex = 0;
+        this.completedChars.clear();
+        this.showScreen(`Tập Viết Từ: ${wordHz}`);
+      },
+
+      openCustomPrompt() {
+        const input = prompt("Nhập chữ Hán bạn muốn tập viết (ví dụ: 你, 好, 学习...):");
+        if (!input) return;
+        const matched = input.match(/[\u4e00-\u9fa5]/g);
+        if (!matched || matched.length === 0) {
+          alert("Vui lòng nhập ít nhất một chữ Hán hợp lệ!");
+          return;
+        }
+        const list = [];
+        const seen = new Set();
+        matched.forEach(char => {
+          if (!seen.has(char)) {
+            seen.add(char);
+            const meta = (window.HANZI_META && window.HANZI_META[char]) || {};
+            list.push({
+              hz: char,
+              py: meta.py || '',
+              hv: meta.hv || '',
+              vi: meta.vi || 'Chữ Hán tự nhập',
+              word: input,
+              wordVi: '',
+              audio: ''
+            });
+          }
+        });
+
+        this.unitNum = null;
+        this.charsList = list;
+        this.currentIndex = 0;
+        this.completedChars.clear();
+        this.showScreen(`Tập Viết Chữ: ${input}`);
+      },
+
+      showScreen(title) {
+        const lessonScreen = document.getElementById('screenLesson');
+        this.previousScreen = (lessonScreen && !lessonScreen.classList.contains('hidden')) ? 'lesson' : 'roadmap';
+        
+        const screen = document.getElementById('screenWriting');
+        if (!screen) return;
+        screen.classList.remove('hidden');
+        document.getElementById('screenRoadmap').classList.add('hidden');
+        if (lessonScreen) lessonScreen.classList.add('hidden');
+        const vicScreen = document.getElementById('screenVictory');
+        if (vicScreen) vicScreen.classList.add('hidden');
+
+        const titleEl = document.getElementById('writingHeaderTitle');
+        if (titleEl) titleEl.innerText = title || "✍️ Tập Viết Chữ Hán";
+        this.renderStrip();
+        this.loadCurrent();
+      },
+
+      close() {
+        if (this.writer) {
+          try { this.writer.cancelQuiz(); } catch(e) {}
+          this.writer = null;
+        }
+        document.getElementById('screenWriting').classList.add('hidden');
+        if (this.previousScreen === 'lesson') {
+          document.getElementById('screenLesson').classList.remove('hidden');
+        } else {
+          document.getElementById('screenRoadmap').classList.remove('hidden');
+          renderRoadmap();
+        }
+      },
+
+      renderStrip() {
+        const row = document.getElementById('charStripRow');
+        if (!row) return;
+        row.innerHTML = '';
+        this.charsList.forEach((item, idx) => {
+          const chip = document.createElement('div');
+          const isDone = this.completedChars.has(item.hz);
+          chip.className = `char-strip-chip ${idx === this.currentIndex ? 'active' : ''} ${isDone ? 'is-done' : ''}`;
+          chip.innerHTML = `
+            <span class="chip-hz">${item.hz}</span>
+            <span class="chip-py">${item.py}</span>
+          `;
+          chip.onclick = () => this.selectChar(idx);
+          row.appendChild(chip);
+        });
+      },
+
+      loadCurrent() {
+        if (!this.charsList || this.charsList.length === 0) return;
+        const item = this.charsList[this.currentIndex];
+        if (!item) return;
+
+        // Subtitle
+        const subEl = document.getElementById('writingHeaderSub');
+        if (subEl) subEl.innerText = `Chữ ${this.currentIndex + 1} / ${this.charsList.length}`;
+
+        // Hero info
+        const largeEl = document.getElementById('hzLargeDisplay');
+        if (largeEl) largeEl.innerText = item.hz;
+        const pyEl = document.getElementById('hzPinyinText');
+        if (pyEl) pyEl.innerText = item.py || '';
+        const hvEl = document.getElementById('hzHanVietBadge');
+        if (hvEl) hvEl.innerText = item.hv ? `Âm Hán Việt: ${item.hv}` : '';
+        const defEl = document.getElementById('hzMeaningText');
+        if (defEl) defEl.innerText = item.vi || '';
+        const ctxEl = document.getElementById('hzContextWord');
+        if (ctxEl) ctxEl.innerText = item.word ? `Trong từ: ${item.word}` : '';
+
+        // Hide completion card
+        const compCard = document.getElementById('charCompleteCard');
+        if (compCard) compCard.classList.add('hidden');
+
+        // Nav buttons
+        const btnPrev = document.getElementById('btnPrevChar');
+        const btnNext = document.getElementById('btnNextChar');
+        if (btnPrev) btnPrev.disabled = (this.currentIndex === 0);
+        if (btnNext) btnNext.disabled = (this.currentIndex === this.charsList.length - 1);
+
+        // Update strip active
+        this.renderStrip();
+
+        // Scroll active chip into view
+        const chips = document.querySelectorAll('.char-strip-chip');
+        if (chips[this.currentIndex]) {
+          chips[this.currentIndex].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        }
+
+        // Render writer
+        this.renderWriter(item.hz);
+      },
+
+      renderWriter(char) {
+        if (this.writer) {
+          try { this.writer.cancelQuiz(); } catch(e) {}
+          this.writer = null;
+        }
+
+        const target = document.getElementById('hanziWriterTarget');
+        if (!target) return;
+        target.innerHTML = '';
+
+        const box = document.getElementById('tianZiGeBox');
+        let size = 250;
+        if (box && box.clientWidth > 100) {
+          size = Math.min(box.clientWidth - 10, 260);
+        }
+
+        this.setFeedback('Đang tải cấu trúc nét chữ...', 'info');
+
+        const self = this;
+        try {
+          this.writer = HanziWriter.create('hanziWriterTarget', char, {
+            width: size,
+            height: size,
+            padding: 18,
+            showOutline: this.showOutline,
+            strokeAnimationSpeed: 1.25,
+            delayBetweenStrokes: 160,
+            strokeColor: '#1e293b',
+            radicalColor: '#e11d48',
+            highlightColor: '#2563eb',
+            outlineColor: '#cbd5e1',
+            drawingColor: '#2563eb',
+            drawingWidth: 18,
+            showHintAfterMisses: 2,
+            charDataLoader: function(c, onComplete, onErr) {
+              if (window.HANZI_CACHE && window.HANZI_CACHE[c]) {
+                onComplete(window.HANZI_CACHE[c]);
+                return;
+              }
+              try {
+                const saved = localStorage.getItem('hz_char_' + c);
+                if (saved) {
+                  onComplete(JSON.parse(saved));
+                  return;
+                }
+              } catch(e) {}
+              fetch('https://cdn.jsdelivr.net/npm/hanzi-writer-data@2.0/' + encodeURIComponent(c) + '.json')
+                .then(res => {
+                  if (!res.ok) throw new Error('Not found');
+                  return res.json();
+                })
+                .then(data => {
+                  try { localStorage.setItem('hz_char_' + c, JSON.stringify(data)); } catch(e) {}
+                  onComplete(data);
+                })
+                .catch(err => {
+                  console.warn("Could not load stroke data for", c, err);
+                  if (onErr) onErr(err);
+                });
+            },
+            onLoadCharDataSuccess: function(charData) {
+              const totalStrokes = charData.strokes ? charData.strokes.length : 0;
+              const countEl = document.getElementById('hzStrokesCount');
+              if (countEl) countEl.innerText = `${totalStrokes} nét`;
+              const progEl = document.getElementById('strokeProgressText');
+              if (progEl) progEl.innerHTML = `Nét: <strong>0</strong> / <strong>${totalStrokes}</strong>`;
+              self.startQuiz();
+            },
+            onLoadCharDataError: function(err) {
+              self.setFeedback('Không thể nạp dữ liệu nét cho chữ này (cần kết nối mạng nếu là chữ ngoài bài học).', 'error');
+            }
+          });
+        } catch(e) {
+          console.error("HanziWriter init error", e);
+        }
+      },
+
+      animate() {
+        if (!this.writer) return;
+        this.writer.cancelQuiz();
+        this.updateControlBtn('demo');
+        this.setFeedback('Đang chiếu mẫu thứ tự nét bút...', 'info');
+
+        const self = this;
+        this.writer.animateCharacter({
+          onComplete: function() {
+            self.setFeedback('Đã chiếu xong! Bấm "Luyện Viết" để tự tay viết nhé.', 'info');
+          }
+        });
+      },
+
+      startQuiz() {
+        if (!this.writer) return;
+        this.writer.cancelQuiz();
+        this.updateControlBtn('write');
+        this.currentQuizMistakes = 0;
+        this.setFeedback('Dùng ngón tay hoặc chuột viết từng nét theo thứ tự!', 'info');
+
+        const self = this;
+        this.writer.quiz({
+          showOutline: this.showOutline,
+          onCorrectStroke: function(data) {
+            AudioEngine.playTap();
+            const progEl = document.getElementById('strokeProgressText');
+            if (progEl) progEl.innerHTML = `Nét: <strong>${data.strokeNum + 1}</strong> / <strong>${data.totalStrokes}</strong>`;
+            self.setFeedback(`Đúng nét ${data.strokeNum + 1}/${data.totalStrokes}! Tiếp tục...`, 'success');
+          },
+          onMistake: function(data) {
+            AudioEngine.playIncorrect();
+            self.currentQuizMistakes++;
+            self.setFeedback(`Sai nét! Chú ý thứ tự và chiều nét (Thử lại nét ${data.strokeNum + 1})`, 'error');
+          },
+          onComplete: function(summary) {
+            AudioEngine.playCorrect();
+            const totalStrokes = summary.totalStrokes || 1;
+            const progEl = document.getElementById('strokeProgressText');
+            if (progEl) progEl.innerHTML = `Nét: <strong>${totalStrokes}</strong> / <strong>${totalStrokes}</strong> ✓`;
+            self.onCharQuizComplete();
+          }
+        });
+      },
+
+      toggleOutline() {
+        this.showOutline = !this.showOutline;
+        const btn = document.getElementById('btnToggleOutline');
+        if (btn) {
+          btn.innerHTML = this.showOutline ? '<span>💡</span> Gợi Ý: BẬT' : '<span>💡</span> Gợi Ý: TẮT';
+          btn.classList.toggle('active', this.showOutline);
+        }
+        if (this.writer) {
+          this.startQuiz();
+        }
+      },
+
+      reset() {
+        const compCard = document.getElementById('charCompleteCard');
+        if (compCard) compCard.classList.add('hidden');
+        if (this.writer) {
+          this.startQuiz();
+        }
+      },
+
+      onCharQuizComplete() {
+        const item = this.charsList[this.currentIndex];
+        if (item) {
+          this.completedChars.add(item.hz);
+        }
+        this.renderStrip();
+
+        const compCard = document.getElementById('charCompleteCard');
+        if (compCard) compCard.classList.remove('hidden');
+
+        let msg = '🎉 Xuất sắc! Nét bút hoàn hảo 100%.';
+        if (this.currentQuizMistakes > 0 && this.currentQuizMistakes <= 2) {
+          msg = `👍 Rất tốt! Hoàn thành với ${this.currentQuizMistakes} lần nhắc nét.`;
+        } else if (this.currentQuizMistakes > 2) {
+          msg = `💪 Đã hoàn thành! Hãy viết lại lần nữa để nhuần nhuyễn hơn nhé.`;
+        }
+        this.setFeedback(msg, 'success');
+
+        if (this.unitNum && this.charsList.every(c => this.completedChars.has(c.hz))) {
+          ProgressManager.markCompleted(currentLevel, this.unitNum, 'writing');
+        }
+      },
+
+      prevChar() {
+        if (this.currentIndex > 0) {
+          this.currentIndex--;
+          this.loadCurrent();
+        }
+      },
+
+      nextChar() {
+        if (this.currentIndex < this.charsList.length - 1) {
+          this.currentIndex++;
+          this.loadCurrent();
+        } else {
+          if (this.unitNum) {
+            ProgressManager.markCompleted(currentLevel, this.unitNum, 'writing');
+            alert(`🎉 Chúc mừng bạn đã hoàn thành bài tập viết tất cả ${this.charsList.length} chữ của Bài ${this.unitNum}!`);
+            this.close();
+          } else {
+            alert('🎉 Bạn đã hoàn thành tất cả các chữ trong danh sách!');
+          }
+        }
+      },
+
+      selectChar(idx) {
+        if (idx >= 0 && idx < this.charsList.length) {
+          this.currentIndex = idx;
+          this.loadCurrent();
+        }
+      },
+
+      playCurrentHanziAudio() {
+        const item = this.charsList[this.currentIndex];
+        if (!item) return;
+        AudioEngine.playUrlOrTTS(item.audio, item.hz);
+      },
+
+      setFeedback(msg, type) {
+        const banner = document.getElementById('writingFeedbackBanner');
+        const icon = document.getElementById('wfIcon');
+        const text = document.getElementById('wfMsg');
+        if (!banner || !text) return;
+
+        banner.className = `writing-feedback-banner ${type || 'info'}`;
+        text.innerText = msg;
+        if (icon) {
+          if (type === 'success') icon.innerText = '✅';
+          else if (type === 'error') icon.innerText = '⚠️';
+          else icon.innerText = '👉';
+        }
+      },
+
+      updateControlBtn(type) {
+        const btnDemo = document.getElementById('btnAnimateStroke');
+        const btnWrite = document.getElementById('btnStartQuiz');
+        if (btnDemo) btnDemo.classList.toggle('active', type === 'demo');
+        if (btnWrite) btnWrite.classList.toggle('active', type === 'write');
+      }
+    };
 
     window.addEventListener('keydown', (e) => {
       if ((e.code === 'Space' || e.code === 'Enter') && !document.getElementById('screenLesson').classList.contains('hidden')) {
